@@ -1,0 +1,40 @@
+site_name: GermanDactyl Dokumentation
+copyright: Copyright &copy; 2023 Paul Schwarz
+
+repo_name: GermanDactyl
+repo_url: https://github.com/pavl21/GermanDactyl
+edit_uri: https://github.com/pavl21/GermanDactyl/main/docs
+
+theme:
+  name: material
+  language: de
+  logo: assets/images/logo.png
+  favicon: assets/images/logo.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      schema: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Zum dunklen Modus wechseln
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Zum hellen Modus wechseln
+
+extra:
+  generator: true
+  social:
+    - icon: fontawesome/brands/tiktok
+      link: https://www.tiktok.com/@paul_schwarz_
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/Paul_Schwarz_
+    - icon: fontawesome/brands/discord
+      link: https://discord.com/users/289810872396808193
+    - icon: fontawesome/solid/globe
+      link: https://sierra-dev.de/
+
+nav:
+  - Start: index.md
