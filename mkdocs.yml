@@ -9,6 +9,8 @@ theme:
   name: material
   language: de
   logo: assets/images/logo.png
+  features:
+    - toc.integrate
   favicon: assets/images/logo.png
   palette:
     - media: "(prefers-color-scheme: light)"
@@ -35,6 +37,18 @@ extra:
       link: https://discord.com/users/289810872396808193
     - icon: fontawesome/solid/globe
       link: https://sierra-dev.de/
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 
 nav:
   - Start: index.md
