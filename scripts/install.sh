@@ -9,7 +9,7 @@ BLUE='\033[1;34m'
 
 # Environment
 DEFAULT_PATH=/var/www/pterodactyl
-REPOSITORY_PATH=pavl21/GermanDactyl
+PATCH_SERVER=https://patch.germandactyl.de
 FORCE_VERSION=none
 USER_PATH=none
 
@@ -68,9 +68,9 @@ function search_patch() {
         VERSION=$FORCE_VERSION
     fi
 
-    PATCH="https://raw.githubusercontent.com/$REPOSITORY_PATH/main/patches/v$VERSION.patch"
+    PATCH="$PATCH_SERVER/$VERSION"
 
-    STATUS=$(curl -s -I "$PATCH" | head -n 1 | cut -d$' ' -f2)
+    STATUS=$(curl -s -I -L "$PATCH" | head -n 1 | cut -d$' ' -f2)
 
     if [ "$STATUS" == "404" ]; then
         send_error "Leider gibt es aktuell noch keinen Patch für diese Version ($BLUE v$VERSION$RED ). Wenn du eine andere Version erzwingen möchtest, füge $BLUE-v Version$RED hinzu. Dieser Schritt ist nicht empfohlen."
@@ -85,8 +85,8 @@ function install_deps() {
 
     if ! command -v "npm" &> /dev/null; then
         send_info "NPM konnte nicht gefunden werden. Node.JS wird installiert."
-        curl -sL https://deb.nodesource.com/setup_16.x | sudo bash - &> /dev/null
-        sudo apt -y install nodejs &> /dev/null
+        curl -sL https://deb.nodesource.com/setup_16.x | bash - &> /dev/null
+        apt -y install nodejs &> /dev/null
         send_success "Node.JS wurde installiert."
     fi
 
@@ -95,11 +95,18 @@ function install_deps() {
         npm install -g yarn &> /dev/null
         send_success "Yarn wurde installiert."
     fi
+
+    if ! command -v "git" &> /dev/null; then
+        send_info "Git wurde nicht gefunden. Es wird nun installiert."
+        apt -y install git &> /dev/null
+        send_success "Git wurde installiert."
+    fi
+
 }
 
 function apply_patch() {
     send_info "Der Patch wird nun angewendet."
-    curl -s "$PATCH" -o germandactyl.patch &> /dev/null
+    curl -s -L "$PATCH" -o germandactyl.patch &> /dev/null
     git apply --ignore-whitespace --ignore-space-change -C1 --inaccurate-eof --apply --reject germandactyl.patch &> /dev/null
 }
 
