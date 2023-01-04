@@ -1,9 +1,10 @@
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+
 <p align="center">
-  [![Contributors][contributors-shield]][contributors-url]
-  [![Forks][forks-shield]][forks-url]
-  [![Stargazers][stars-shield]][stars-url]
-  [![Issues][issues-shield]][issues-url]
-  [![MIT License][license-shield]][license-url]
   <a href="https://github.com/pavl21/GermanDactyl">
     <img src="https://raw.githubusercontent.com/pavl21/GermanDactyl/main/docs/assets/images/logo.png" alt="Logo" width="80" height="80">
   </a>
