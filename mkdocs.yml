@@ -11,6 +11,7 @@ theme:
   logo: assets/images/logo.png
   features:
     - toc.integrate
+    - content.code.annotate
   favicon: assets/images/logo.png
   palette:
     - media: "(prefers-color-scheme: light)"
@@ -52,3 +53,9 @@ markdown_extensions:
 
 nav:
   - Start: index.md
+  - Installation: installation.md
+  - Addons:
+        - Bald: 404.md
+  - Guides:
+      - Übersetzungen einreichen: guides/contribute.md
+  - Fehlerbehebung: troubleshooting.md
