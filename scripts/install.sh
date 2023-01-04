@@ -70,7 +70,7 @@ function search_patch() {
 
     PATCH="$PATCH_SERVER/$VERSION"
 
-    STATUS=$(curl -s -I -L "$PATCH" | head -n 1 | cut -d$' ' -f2)
+    STATUS=$(curl -s -I -L "$PATCH" | grep "HTTP/2" | tail -n 1 | tail -1 | cut -d$' ' -f2)
 
     if [ "$STATUS" == "404" ]; then
         send_error "Leider gibt es aktuell noch keinen Patch für diese Version ($BLUE v$VERSION$RED ). Wenn du eine andere Version erzwingen möchtest, füge $BLUE-v Version$RED hinzu. Dieser Schritt ist nicht empfohlen."
