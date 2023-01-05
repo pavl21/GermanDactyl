@@ -13,7 +13,11 @@
 
 ## Was ist GermanDactyl?
 
-GermanDactyl ist die deutsche Übersetzung des Pterodactyl-Interfaces.
+GermanDactyl ist die deutsche Übersetzung des [Pterodactyl-Interfaces](https://pterodactyl.io/).
+
+## Wie installiere ich das?
+Ganz einfach: `curl -sSL https://install.germandactyl.de/ | sudo bash -s --`  
+Schau dir [die Documentation](https://germandactyl.de/installation/) für weitere Informationen an
 
 ## Lizenz
 
