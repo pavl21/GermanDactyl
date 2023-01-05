@@ -15,7 +15,7 @@ git tag base
 patch_files=$(ls -1 patches/*.patch 2>/dev/null | wc -l)
 if [ "$patch_files" != 0 ]; then
     patch=$(ls -t patches/*.patch | head -1)
-    git apply --ignore-whitespace --ignore-space-change -C1 --inaccurate-eof --apply --allow-empty --reject "$patch"
+    git apply --ignore-whitespace --ignore-space-change -C1 --apply --allow-empty --reject "$patch"
 
     rejected_files=$(find . \( -name "*.rej" -o -name "*.orig" \) | wc -l)
     if [ "$rejected_files" == 0 ]; then

@@ -56,7 +56,7 @@ Folge dafür folgenden Schritten:
     cd /var/www/pterodactyl
    
     # Wende den Patch an (2)
-    git apply --ignore-whitespace --ignore-space-change -C1 --inaccurate-eof --apply --reject germandactyl.patch
+    git apply --ignore-whitespace --ignore-space-change -C1 --apply --reject germandactyl.patch
     ```
     1. Hier wird als Beispiel `/var/www/pterodactyl` verwendet. Passe diesen Ordner an deine Instanz an
     2. Solltest du mit den Parametern nicht zufrieden sein, passe sie so an, dass sie für dich Sinn ergeben.   

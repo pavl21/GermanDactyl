@@ -107,7 +107,7 @@ function install_deps() {
 function apply_patch() {
     send_info "Der Patch wird nun angewendet."
     curl -s -L "$PATCH" -o germandactyl.patch &> /dev/null
-    git apply --ignore-whitespace --ignore-space-change -C1 --inaccurate-eof --apply --reject germandactyl.patch &> /dev/null
+    git apply --ignore-whitespace --ignore-space-change -C1 --apply --reject germandactyl.patch &> /dev/null
 }
 
 function show_rejected() {
