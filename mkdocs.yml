@@ -57,5 +57,6 @@ nav:
   - Addons:
         - Bald: 404.md
   - Guides:
+      - Update ausführen: guides/update.md
       - Übersetzungen einreichen: guides/contribute.md
   - Fehlerbehebung: troubleshooting.md
