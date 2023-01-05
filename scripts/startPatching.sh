@@ -7,16 +7,18 @@ wget -q -O - https://github.com/pterodactyl/panel/releases/latest/download/panel
 # Switch to patch mode
 git reset --hard HEAD
 git checkout -b patches
+git add .
+git commit -m "base"
+git tag base
 
 # Apply previous patch
 patch_files=$(ls -1 patches/*.patch 2>/dev/null | wc -l)
 if [ "$patch_files" != 0 ]; then
     patch=$(ls -t patches/*.patch | head -1)
     git apply --ignore-whitespace --ignore-space-change -C1 --inaccurate-eof --apply --allow-empty --reject "$patch"
-    find . -name \*.rej -print0 | xargs rm
-    find . -name \*.orig -print0 | xargs rm
+    find . \( -name "*.rej" -o -name "*.orig" \) | while read -r file; do
+        file_pretty=$(echo "$file" | cut -c 3-)
+        echo -e "\033[1;31m✗${file_pretty%.*} konnte nicht gepatcht werden.\033[0;39m"
+        rm "$file"
+    done
 fi
-
-git add .
-git commit -m "base"
-git tag base
