@@ -16,9 +16,10 @@ patch_files=$(ls -1 patches/*.patch 2>/dev/null | wc -l)
 if [ "$patch_files" != 0 ]; then
     patch=$(ls -t patches/*.patch | head -1)
     git apply --ignore-whitespace --ignore-space-change -C1 --inaccurate-eof --apply --allow-empty --reject "$patch"
+    echo -e "\033[1;31m✗ Folgende Dateien konnten nicht gepatcht werden und brauchen manuelle Übersetzungen:\033[0;39m"
     find . \( -name "*.rej" -o -name "*.orig" \) | while read -r file; do
         file_pretty=$(echo "$file" | cut -c 3-)
-        echo -e "\033[1;31m✗${file_pretty%.*} konnte nicht gepatcht werden.\033[0;39m"
+        echo -e "\033[1;31m✗ ${file_pretty%.*}\033[0;39m"
         rm "$file"
     done
 fi
