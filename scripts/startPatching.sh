@@ -33,5 +33,5 @@ if [ "$patch_files" != 0 ]; then
 fi
 
 echo ""
-echo "Patch-Modus betreten. Verändere jetzt keine Dateien mehr am Projekt, verändere nur noch Übersetzungen."
+echo "Patch-Modus betreten. Verändere jetzt keine Dateien mehr an GermanDactyl selbst, verändere nur noch Übersetzungen."
 echo "Ab jetzt werden alle Veränderungen zum Patch hinzugefügt. Gib ./scripts/createPatch.sh ein, sobald du fertig bist"
