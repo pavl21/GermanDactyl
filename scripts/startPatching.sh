@@ -25,7 +25,7 @@ if [ "$patch_files" != 0 ]; then
         rm "$file"
     done
 
-    if [ "$found_files" == "yes" ]; then
+    if [ "$found_files" == "no" ]; then
         echo -e "\033[1;31m✗ Alle Patches wurden sauber angewendet. Keine manuellen Eingriffe erforderlich."
     fi
 
