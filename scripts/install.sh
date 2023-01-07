@@ -44,15 +44,15 @@ function verify_pterodactyl_path() {
     PTERODACTYL_PATH=$1
 
     if [ "$VERSION" ]; then
-        send_success "Es wurde eine pterodactyl-Instanz mit der Version$BLUE v$VERSION$GREEN unter $BLUE$1$GREEN gefunden."
+        send_success "Es wurde eine Pterodactyl-Instanz mit der Version$BLUE v$VERSION$GREEN unter $BLUE$1$GREEN gefunden."
     else
-        send_error "In diesem Ordner wurde keine pterodactyl-Instanz gefunden. Bitte verwende einen anderen Pfad."
+        send_error "In diesem Ordner wurde keine Pterodactyl-Instanz gefunden. Bitte verwende einen anderen Pfad."
     fi
 }
 
 function load_pterodactyl_path() {
     if [ "$USER_PATH" == "none" ]; then
-        send_warn "Es wurde kein Instanzort angegeben. Deine pterodactyl-Instanz wird im default-Ordner gesucht."
+        send_warn "Es wurde kein Instanzort angegeben. Deine Pterodactyl-Instanz wird im default-Ordner gesucht."
         verify_pterodactyl_path $DEFAULT_PATH
     else
         if [ ! -d "$USER_PATH" ]; then
@@ -127,7 +127,7 @@ function compile_panel() {
 }
 
 if [ $EUID -ne 0 ]; then
-    send_error "Bitte führe diesen Befehl als Superuser aus."
+    send_error "Du hast mit diesem Account nicht genügend Rechte, um die Installation zu starten. Melde dich mit einem Superuser-Account an, um fortzufahren."
 fi
 
 load_pterodactyl_path
@@ -138,4 +138,4 @@ apply_patch
 show_rejected
 compile_panel
 
-send_success "Das Panel wurde gepatcht. Viel Spaß :)"
+send_success "Der Patch wurde angewendet. Viel Spaß! :)"
