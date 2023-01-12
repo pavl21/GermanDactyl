@@ -22,6 +22,10 @@ Schau dir [die Documentation](https://germandactyl.de/installation/) für weiter
 ## Für dieses Projekt spenden
 Du möchtest für die freiwillige Arbeit spenden? Gerne! Hier kannst du [Über PayPal](https://paypal.me/PaulWilliSchwarz) eine kleine Spende abgeben. Alle, die uns Spenden, werden hier dann aufgelistet.
 
+## Discord
+Wenn du uns dabei helfen möchtest, etwas zu übersetzen oder zu umschreiben, dann komm gerne [in unseren Discord](https://discord.gg/6R38NnTCct).
+
+
 ## Lizenz
 
 Verbreitet unter der MIT-Lizenz. Siehe `LICENSE` für weitere Informationen.
