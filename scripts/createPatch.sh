@@ -10,7 +10,8 @@ git commit -m "Translations $version"
 git format-patch base..HEAD --stdout > "patches/$version.patch"
 rm -r public
 git add .
-git commit -m "Revert changes"
+git commit -m "Patch file"
 git checkout main
+git restore --source patches "patches/$version.patch"
 git tag -d base
 git branch -D patches
