@@ -1,4 +1,4 @@
-Hier erscheinen bald häufig eingereichte Fehler und die dazu passende Lösung. Bitte gedulde dich noch ein wenig!
+Hier findest du alle Lösungen, die wir kennen. Wenn bei dir ein unbekannter Fehler auftritt, kannst du ein ein [Issue](https://github.com/pavl21/GermanDactyl/issues) eröffnen, damit wir weiterhelfen können.
 
 ??? error "In diesem Ordner wurde keine pterodactyl-Instanz gefunden. Bitte verwende einen anderen Pfad."
     Dieser Fehler tritt meistens auf, wenn pterodactyl unter einem anderen Ordner als `/var/www/pterodactyl` installiert
@@ -22,8 +22,8 @@ Hier erscheinen bald häufig eingereichte Fehler und die dazu passende Lösung. 
     erhalten, überprüfe, ob ein Addon oder Theme den Patch blockiert oder du die richtige Version von GermanDactyl
     ausgewählt hast.
     
-??? error "Das Panel ist nach dem Upgrade nur noch weiß"
+??? error "Das Panel ist nach dem Upgrade/Installation nur noch weiß"
     Das Problem hängt meist mit dem Theme zusammen, was du davor genutzt hast. Einige Themes oder Addons erstellen neue Dateien,
-    die normalerweise nicht in Pterodactyl dabei ist. Die beste Lösung wäre, das du im Verzeichnis `/var/www/pterodactyl` 
+    die normalerweise nicht in Pterodactyl dabei sind. Die beste Lösung wäre, das du im Verzeichnis `/var/www/pterodactyl` 
     den Ordner `ressources` komplett löschst, sichere dir aber am besten vorher die Version als Backup, solltest du noch eigene
-    Änderungen gemacht haben. Führe dann das Upgrade erneut durch.
+    Änderungen gemacht haben. Führe dann das Upgrade, [wie hier beschrieben](https://germandactyl.de/guides/update/), erneut durch.
