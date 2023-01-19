@@ -24,6 +24,6 @@ Hier erscheinen bald häufig eingereichte Fehler und die dazu passende Lösung. 
     
 ??? error "Das Panel ist nach dem Upgrade nur noch weiß"
     Das Problem hängt meist mit dem Theme zusammen, was du davor genutzt hast. Einige Themes oder Addons erstellen neue Dateien,
-    die normalerweise nicht in Pterodactyl dabei ist. Die beste Lösung wäre, das du im Verzeichnis /var/www/pterodactyl 
-    den Ordner ressources komplett löschst, sichere dir aber am besten vorher die Version als Backup, solltest du noch eigene
+    die normalerweise nicht in Pterodactyl dabei ist. Die beste Lösung wäre, das du im Verzeichnis `/var/www/pterodactyl` 
+    den Ordner `ressources` komplett löschst, sichere dir aber am besten vorher die Version als Backup, solltest du noch eigene
     Änderungen gemacht haben. Führe dann das Upgrade erneut durch.
