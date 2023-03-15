@@ -75,4 +75,4 @@ Folge dafür folgenden Schritten:
     php artisan optimize
     ```
    
-Das wars. Nun hast du eine deutsche Version für dein pterodactyl Interface :)
+Das wars. Nun hast du eine deutsche Version für dein Pterodactyl-Panel :)

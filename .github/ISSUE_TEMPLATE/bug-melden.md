@@ -7,10 +7,7 @@ assignees: ''
 
 ---
 
--> **Beschreibe bitte kurz, was der Bug genau macht**
-
-
--> **Wie kann man den Bug reproduzieren?**
+-> **Was steht dort?**
 
 
 -> **Was meinst du? Wie soll`s richtig sein?**
