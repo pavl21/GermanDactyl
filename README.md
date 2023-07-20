@@ -19,8 +19,6 @@ GermanDactyl ist die deutsche Übersetzung des [Pterodactyl-Interfaces](https://
 Ganz einfach: `curl -sSL https://install.germandactyl.de/ | sudo bash -s --`  
 Schau dir [die Documentation](https://germandactyl.de/installation/) für weitere Informationen an
 
-## Für dieses Projekt spenden
-Du möchtest für die freiwillige Arbeit spenden? Gerne! Hier kannst du [Über PayPal](https://paypal.me/PaulWilliSchwarz) eine kleine Spende abgeben. Alle, die uns Spenden, werden hier dann aufgelistet.
 
 ## Discord
 Wenn du uns dabei helfen möchtest, etwas zu übersetzen oder zu umschreiben, dann komm gerne [in unseren Discord](https://discord.gg/6R38NnTCct).
