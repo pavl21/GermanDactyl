@@ -86,8 +86,12 @@ function install_deps() {
     if ! command -v "npm" &> /dev/null; then
         send_info "NPM konnte nicht gefunden werden. Node.JS wird installiert."
         curl -sL https://deb.nodesource.com/setup_16.x | bash - &> /dev/null
-        apt -y install nodejs npm &> /dev/null
+        apt -y install nodejs &> /dev/null
         send_success "Node.JS wurde installiert."
+    fi
+
+    if ! command -v "npm" &> /dev/null; then
+        apt -y install npm &> /dev/null
     fi
 
     if ! command -v "yarn" &> /dev/null; then
