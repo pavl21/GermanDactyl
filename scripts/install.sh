@@ -121,7 +121,7 @@ function show_rejected() {
 function compile_panel() {
     send_info "Das Panel wird nun erneut kompiliert. Das dauert einen Moment."
     yarn install &> "$PTERODACTYL_PATH/germandactyl.debug.log"
-    yarn run build:production &> "$PTERODACTYL_PATH/germandactyl.debug.log"
+    NODE_OPTIONS=--openssl-legacy-provider yarn run build:production &> "$PTERODACTYL_PATH/germandactyl.debug.log"
     php artisan view:clear &> "$PTERODACTYL_PATH/germandactyl.debug.log"
     php artisan optimize &> "$PTERODACTYL_PATH/germandactyl.debug.log"
 }
