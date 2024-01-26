@@ -4,7 +4,7 @@
 Wir möchten mehr als eine Übersetzung bieten, und haben uns die Mühe gemacht den Kern einfacher zu gestalten: Die Installation und Verwaltung von Pterodactyl.
 Mithilfe dieses Scriptes kannst du kinderleicht ein Pterodactyl Panel aufsetzen, du benötigst dazu nur einen Linux Server und eine eigene Domain.
 
-!!! info "Die Voraussetzungen"
+!!! info "Voraussetzungen"
     - Debian oder Ubuntu basiertes System
     - Genügend Speicherplatz (ca. 1GB für das Panel und Wings)
 
@@ -17,6 +17,7 @@ Mit diesem Befehl kannst du das Script starten:
 ```
 curl -sSL https://install.germandactyl.de/ | sudo bash -s --
 ```
+
 
 ## Die Funktionen
 
