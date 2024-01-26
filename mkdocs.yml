@@ -54,9 +54,11 @@ markdown_extensions:
 nav:
   - Start: index.md
   - Installation: installation.md
+  - GermanDactyl Setup: guides/setup.md
   - Addons:
         - Bald: 404.md
   - Guides:
       - Update ausführen: guides/update.md
       - Übersetzungen einreichen: guides/contribute.md
   - Fehlerbehebung: troubleshooting.md
+  - FAQ: faq.md
