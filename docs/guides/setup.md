@@ -7,6 +7,7 @@ Mithilfe dieses Scriptes kannst du kinderleicht ein Pterodactyl Panel aufsetzen,
 !!! info "Voraussetzungen"
     - Debian oder Ubuntu basiertes System
     - Genügend Speicherplatz (ca. 1GB für das Panel und Wings)
+    - Ein frisch aufgesetztes System, wo Port 80 nicht verwendet wird.
 
 ## Installation
 
@@ -38,4 +39,5 @@ Sobald das Pterodactyl Panel steht, kann mit der Installation von Wings fortgefa
 
 ### Allgemeine Verwaltung von Pterodactyl
 ![Bild](https://i.imgur.com/uYh4sg4.png)
+
 Nach dem Aufsetzen einiger Server in Pterodactyl oder dem Betrieb im allgemeinen fragt man sich schon, wie man sich die Verwaltung und Wartung leicht machen kann. Dafür haben wir die Pterodactyl Verwaltung/Wartung. Dort kannst du mit Tools einige allgemeine Probleme selbst lösen oder Software bzw. Themes auf Wunsch integrieren.
