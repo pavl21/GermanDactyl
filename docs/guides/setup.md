@@ -5,7 +5,7 @@ Wir möchten mehr als eine Übersetzung bieten, und haben uns die Mühe gemacht 
 Mithilfe dieses Scriptes kannst du kinderleicht ein Pterodactyl Panel aufsetzen, du benötigst dazu nur einen Linux Server und eine eigene Domain.
 
 !!! info "Voraussetzungen"
-    - Debian oder Ubuntu basiertes System
+    - Debian 11, andere sind nicht mit Whiptail kompaibel
     - Genügend Speicherplatz (ca. 1GB für das Panel und Wings)
     - Ein frisch aufgesetztes System, wo Port 80 nicht verwendet wird.
 
