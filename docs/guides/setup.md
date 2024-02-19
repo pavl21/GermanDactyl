@@ -42,9 +42,10 @@ Sobald das Pterodactyl Panel steht, kann mit der Installation von Wings fortgefa
 
 Nach dem Aufsetzen einiger Server in Pterodactyl oder dem Betrieb im allgemeinen fragt man sich schon, wie man sich die Verwaltung und Wartung leicht machen kann. Dafür haben wir die Pterodactyl Verwaltung/Wartung. Dort kannst du mit Tools einige allgemeine Probleme selbst lösen oder Software bzw. Themes auf Wunsch integrieren.
 
+<br>
 
-
-
+!!! info "Info bei fehlerhaften Angaben"
+    Es kann sein, das Angaben fehlen. Diesem Fehler gehen wir gerne nach und korrigieren es, sofern wir davon erfahren.
 
 # Verweise auf Teile des Scripts
 
@@ -54,4 +55,4 @@ Einige Teile des Scripts stammen von anderen Entwicklern, hier wird dann der Ent
 Die Farbthemen bei den Themes stammen von dem Entwickler  [SigmaProduction](https://github.com/Sigma-Production/PteroFreeStuffinstaller)
 
 ## Let's Encrypt
-Damit die SSL Zertifikate zur Verfügung gestellt werden können, wird Certbot verwendet. Mehr als 100 Sponsoren, darunter auch Google und Amazon, ermöglichen es, das SSL Zertifikate kostenlos zur Verfügung gestellt werden können. Hierbei gilt zu beachten, das die bereitgestellten Zertifikate 90 Tage gelten, danach müssen sie erneuert werden. Das kannst du aber in der Problembehandlung ganz einfach erneuern lassen. 
+Damit die SSL Zertifikate zur Verfügung gestellt werden können, wird Certbot verwendet. [Mehr als 100 Sponsoren](https://letsencrypt.org/de/sponsors/), darunter auch Google und Amazon, ermöglichen es, das SSL Zertifikate kostenlos zur Verfügung gestellt werden können. Hierbei gilt zu beachten, das die bereitgestellten Zertifikate 90 Tage gelten, danach müssen sie erneuert werden. Das kannst du aber in der Problembehandlung ganz einfach erneuern lassen. 
