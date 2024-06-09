@@ -16,7 +16,7 @@ Mithilfe dieses Scriptes kannst du kinderleicht ein Pterodactyl Panel aufsetzen,
 
 Mit diesem Befehl kannst du das Script starten:
 ```
-curl -sSL https://setup.germandactyl.de/ | sudo bash -s --
+sudo bash -c "$(curl -sSL https://setup.germandactyl.de/)"
 ```
 
 
