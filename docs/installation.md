@@ -19,7 +19,7 @@ Füge einfach den folgenden Befehl in die Konsole deines Servers ein. GermanDact
 
 === ":material-update: Version auswählen"
     ```shell
-    curl -sSL https://install.germandactyl.de/ | sudo bash -s -- -v 1.11.2
+    curl -sSL https://install.germandactyl.de/ | sudo bash -s -- -v 1.11.3
     ```
     !!! warning "Nicht empfohlen"
         Das Anpassen der Version wird nicht empfohlen. Dies sollte nur eingesetzt werden, wenn die von Pterodactyl
