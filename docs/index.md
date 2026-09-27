@@ -1,11 +1,13 @@
-# GermanDactyl - Willkommen!
+# GermanDactyl – Willkommen!
 
-Willkommen auf dem GermanDactyl-Projekt.
-Mithilfe von GNM möchte ich anderen die Möglichkeit bieten, Pterodactyl auf Deutsch zu übersetzen.
+Willkommen beim GermanDactyl-Projekt. GermanDactyl übersetzt das [Pterodactyl Panel](https://pterodactyl.io/) ins Deutsche – sowohl das Server- als auch das Adminpanel.
 
-## Warum bieten wir das an?
-Die Entwickler von Pterodactyl haben einiges in kurzer Zeit umgestellt, weswegen das Übersetzen schwieriger wurde. Stand jetzt ist alles Hard gecodet. Mithilfe unseres Projekts kannst du mit wenigen Befehlen alles ins Deutsche bringen.
+## Wie funktioniert das?
 
-## Kann man auch hierüber Pterodactyl installieren?
-Ja, mit unserem Tool namens GermanDactyl Setup! Mithilfe dieses Scripts kannst du über eine grafische Oberfläche in einer SSH-Sitzung ganz leicht dein Pterodactyl Panel und die Server aufsetzen. Für mehr schau einfach [in unserem Beitrag](https://germandactyl.de/guides/setup/).
+Pterodactyl bringt offiziell nur Englisch mit, und viele Texte sind fest in die Oberfläche eingebaut (hartcodiert). GermanDactyl ergänzt deshalb Deutsch als eigene Sprache (`resources/lang/de`) und übersetzt die fest eingebauten Texte per Patch. Mit einem einzigen Befehl ist dein Panel auf Deutsch – [hier geht's zur Installation](installation.md).
 
+Aktuell unterstützte Panel-Version: **v1.15.1**.
+
+## Kann ich hierüber auch Pterodactyl installieren?
+
+Ja, mit unserem Tool GermanDactyl Setup! Mit diesem Skript richtest du über eine grafische Oberfläche in einer SSH-Sitzung ganz leicht dein Pterodactyl Panel und Wings ein. Mehr dazu findest du [in unserem Beitrag](guides/setup.md).

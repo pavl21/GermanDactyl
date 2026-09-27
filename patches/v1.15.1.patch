@@ -330,7 +330,7 @@ index a10e6b9..ac86f14 100644
          return redirect()->route('admin.mounts.view', $mount->id);
      }
 diff --git a/app/Http/Controllers/Admin/NodeAutoDeployController.php b/app/Http/Controllers/Admin/NodeAutoDeployController.php
-index 2be1a91..a5af3b6 100644
+index e7c9cd6..6649c48 100644
 --- a/app/Http/Controllers/Admin/NodeAutoDeployController.php
 +++ b/app/Http/Controllers/Admin/NodeAutoDeployController.php
 @@ -40,7 +40,7 @@ class NodeAutoDeployController extends Controller
@@ -340,7 +340,7 @@ index 2be1a91..a5af3b6 100644
 -                'memo' => 'Automatically generated node deployment key.',
 +                'memo' => 'Automatisch erzeugter Schlüssel für das Node-Deployment.',
                  'allowed_ips' => [],
-             ], ['r_nodes' => 1]);
+             ], ['r_nodes' => 3]);
          }
 diff --git a/app/Http/Controllers/Admin/Servers/ServerViewController.php b/app/Http/Controllers/Admin/Servers/ServerViewController.php
 index 0d1b7e8..cc50268 100644
@@ -356,10 +356,10 @@ index 0d1b7e8..cc50268 100644
  
          // Check if the panel doesn't have at least 2 nodes configured.
 diff --git a/app/Http/Controllers/Admin/ServersController.php b/app/Http/Controllers/Admin/ServersController.php
-index 1805a83..c21939c 100644
+index 560f721..14fdec4 100644
 --- a/app/Http/Controllers/Admin/ServersController.php
 +++ b/app/Http/Controllers/Admin/ServersController.php
-@@ -254,7 +254,7 @@ class ServersController extends Controller
+@@ -255,7 +255,7 @@ class ServersController extends Controller
  
          $mountServer->saveOrFail();
  
@@ -368,7 +368,7 @@ index 1805a83..c21939c 100644
  
          return redirect()->route('admin.servers.view.mounts', $server->id);
      }
-@@ -266,7 +266,7 @@ class ServersController extends Controller
+@@ -267,7 +267,7 @@ class ServersController extends Controller
      {
          MountServer::where('mount_id', $mount->id)->where('server_id', $server->id)->delete();
  
@@ -416,21 +416,34 @@ index 0725f8d..8fc271d 100644
          }
  
          $values = $request->normalize();
-diff --git a/app/Http/Controllers/Api/Client/ApiKeyController.php b/app/Http/Controllers/Api/Client/ApiKeyController.php
-index fc9aa64..a2ab290 100644
---- a/app/Http/Controllers/Api/Client/ApiKeyController.php
-+++ b/app/Http/Controllers/Api/Client/ApiKeyController.php
-@@ -30,7 +30,7 @@ class ApiKeyController extends ClientApiController
-     public function store(StoreApiKeyRequest $request): array
-     {
-         if ($request->user()->apiKeys->count() >= 25) {
--            throw new DisplayException('You have reached the account limit for number of API keys.');
-+            throw new DisplayException('Du hast das Limit an API-Schlüsseln für dein Konto erreicht.');
+diff --git a/app/Http/Controllers/Api/Client/AccountController.php b/app/Http/Controllers/Api/Client/AccountController.php
+index 8f733cd..bf68fb4 100644
+--- a/app/Http/Controllers/Api/Client/AccountController.php
++++ b/app/Http/Controllers/Api/Client/AccountController.php
+@@ -46,7 +46,7 @@ class AccountController extends ClientApiController
+         // of 24 hours. This prevents malicious users from trying to find
+         // existing accounts in the system by constantly changing their email.
+         if (RateLimiter::tooManyAttempts($key = "user:update-email:{$user->uuid}", 3)) {
+-            throw new TooManyRequestsHttpException(message: 'Your email address has been changed too many times today. Please try again later.');
++            throw new TooManyRequestsHttpException(message: 'Du hast deine E-Mail-Adresse heute zu oft geändert. Bitte versuche es später erneut.');
          }
  
-         $token = $request->user()->createToken(
+         $original = $user->email;
+diff --git a/app/Http/Controllers/Api/Client/ApiKeyController.php b/app/Http/Controllers/Api/Client/ApiKeyController.php
+index f217220..7cf794c 100644
+--- a/app/Http/Controllers/Api/Client/ApiKeyController.php
++++ b/app/Http/Controllers/Api/Client/ApiKeyController.php
+@@ -32,7 +32,7 @@ class ApiKeyController extends ClientApiController
+     {
+         $token = DB::transaction(function () use ($request) {
+             if ($request->user()->apiKeys()->lockForUpdate()->count() >= 25) {
+-                throw new DisplayException('You have reached the account limit for number of API keys.');
++                throw new DisplayException('Du hast das Limit an API-Schlüsseln für dein Konto erreicht.');
+             }
+ 
+             return $request->user()->createToken(
 diff --git a/app/Http/Controllers/Api/Client/Servers/BackupController.php b/app/Http/Controllers/Api/Client/Servers/BackupController.php
-index 002f77d..1a85983 100644
+index 2db02b3..f6dcf09 100644
 --- a/app/Http/Controllers/Api/Client/Servers/BackupController.php
 +++ b/app/Http/Controllers/Api/Client/Servers/BackupController.php
 @@ -171,7 +171,7 @@ class BackupController extends ClientApiController
@@ -450,7 +463,7 @@ index 002f77d..1a85983 100644
 +            throw new BadRequestHttpException('Dieser Server befindet sich derzeit nicht in einem Zustand, in dem ein Backup wiederhergestellt werden kann.');
          }
  
-         if (!$backup->is_successful && is_null($backup->completed_at)) {
+         if (!$backup->is_successful || is_null($backup->completed_at)) {
 -            throw new BadRequestHttpException('This backup cannot be restored at this time: not completed or failed.');
 +            throw new BadRequestHttpException('Dieses Backup kann derzeit nicht wiederhergestellt werden: Es ist nicht abgeschlossen oder fehlgeschlagen.');
          }
@@ -469,6 +482,19 @@ index eb6394c..5cb8e4c 100644
                  }
              }
  
+diff --git a/app/Http/Controllers/Api/Client/Servers/DatabaseController.php b/app/Http/Controllers/Api/Client/Servers/DatabaseController.php
+index 9468617..361be36 100644
+--- a/app/Http/Controllers/Api/Client/Servers/DatabaseController.php
++++ b/app/Http/Controllers/Api/Client/Servers/DatabaseController.php
+@@ -51,7 +51,7 @@ class DatabaseController extends ClientApiController
+     {
+         $database = Activity::event('server:database.create')->transaction(function ($log) use ($request, $server) {
+             if ($server->databases()->lockForUpdate()->count() >= $server->database_limit) {
+-                throw new DisplayException('Cannot create additional databases on this server: limit has been reached.');
++                throw new DisplayException('Auf diesem Server können keine weiteren Datenbanken erstellt werden: Das Limit ist erreicht.');
+             }
+ 
+             $database = $this->deployDatabaseService->handle($server, $request->validated());
 diff --git a/app/Http/Controllers/Api/Client/Servers/NetworkAllocationController.php b/app/Http/Controllers/Api/Client/Servers/NetworkAllocationController.php
 index 6f66f42..c95c872 100644
 --- a/app/Http/Controllers/Api/Client/Servers/NetworkAllocationController.php
@@ -497,10 +523,10 @@ index 6f66f42..c95c872 100644
  
          Allocation::query()->where('id', $allocation->id)->update([
 diff --git a/app/Http/Controllers/Api/Client/Servers/ScheduleController.php b/app/Http/Controllers/Api/Client/Servers/ScheduleController.php
-index 832e426..c989208 100644
+index df2403e..c105df8 100644
 --- a/app/Http/Controllers/Api/Client/Servers/ScheduleController.php
 +++ b/app/Http/Controllers/Api/Client/Servers/ScheduleController.php
-@@ -178,7 +178,7 @@ class ScheduleController extends ClientApiController
+@@ -184,7 +184,7 @@ class ScheduleController extends ClientApiController
                  $request->input('day_of_week')
              );
          } catch (\Exception $exception) {
@@ -575,10 +601,10 @@ index 2f8cd6c..8b6f559 100644
  
          $original = $variable->server_value;
 diff --git a/app/Http/Controllers/Api/Client/Servers/WebsocketController.php b/app/Http/Controllers/Api/Client/Servers/WebsocketController.php
-index 9a3a1f5..dfa15e9 100644
+index a949bd0..4cecf2a 100644
 --- a/app/Http/Controllers/Api/Client/Servers/WebsocketController.php
 +++ b/app/Http/Controllers/Api/Client/Servers/WebsocketController.php
-@@ -34,7 +34,7 @@ class WebsocketController extends ClientApiController
+@@ -35,7 +35,7 @@ class WebsocketController extends ClientApiController
      {
          $user = $request->user();
          if ($user->cannot(Permission::ACTION_WEBSOCKET_CONNECT, $server)) {
@@ -587,7 +613,7 @@ index 9a3a1f5..dfa15e9 100644
          }
  
          $permissions = $this->permissionsService->handle($server, $user);
-@@ -43,7 +43,7 @@ class WebsocketController extends ClientApiController
+@@ -44,7 +44,7 @@ class WebsocketController extends ClientApiController
          if (!is_null($server->transfer)) {
              // Check if the user has permissions to receive transfer logs.
              if (!in_array('admin.websocket.transfer', $permissions)) {
@@ -679,10 +705,10 @@ index aede7fa..ccf9838 100644
  
          $params = [
 diff --git a/app/Http/Controllers/Api/Remote/SftpAuthenticationController.php b/app/Http/Controllers/Api/Remote/SftpAuthenticationController.php
-index 6db0d45..1cf50f7 100644
+index 9614593..60543c6 100644
 --- a/app/Http/Controllers/Api/Remote/SftpAuthenticationController.php
 +++ b/app/Http/Controllers/Api/Remote/SftpAuthenticationController.php
-@@ -35,13 +35,13 @@ class SftpAuthenticationController extends Controller
+@@ -36,13 +36,13 @@ class SftpAuthenticationController extends Controller
      {
          $connection = $this->parseUsername($request->input('username'));
          if (empty($connection['server'])) {
@@ -698,7 +724,7 @@ index 6db0d45..1cf50f7 100644
          }
  
          $user = $this->getUser($request, $connection['username']);
-@@ -132,7 +132,7 @@ class SftpAuthenticationController extends Controller
+@@ -137,7 +137,7 @@ class SftpAuthenticationController extends Controller
              $this->incrementLoginAttempts($request);
          }
  
@@ -707,7 +733,7 @@ index 6db0d45..1cf50f7 100644
      }
  
      /**
-@@ -146,7 +146,7 @@ class SftpAuthenticationController extends Controller
+@@ -151,7 +151,7 @@ class SftpAuthenticationController extends Controller
              if (!in_array(Permission::ACTION_FILE_SFTP, $permissions)) {
                  Activity::event('server:sftp.denied')->actor($user)->subject($server)->log();
  
@@ -904,12 +930,21 @@ index efa1cc3..c24d103 100644
              }
          });
 diff --git a/app/Http/Requests/Api/Client/Account/StoreSSHKeyRequest.php b/app/Http/Requests/Api/Client/Account/StoreSSHKeyRequest.php
-index 3c8cf89..2952825 100644
+index a7e462e..bb3df77 100644
 --- a/app/Http/Requests/Api/Client/Account/StoreSSHKeyRequest.php
 +++ b/app/Http/Requests/Api/Client/Account/StoreSSHKeyRequest.php
-@@ -36,22 +36,22 @@ class StoreSSHKeyRequest extends ClientApiRequest
+@@ -40,7 +40,7 @@ class StoreSSHKeyRequest extends ClientApiRequest
+ 
+             $publicKey = trim($publicKey);
+             if (!UserSSHKey::isSupportedPublicKeyMaterial($publicKey)) {
+-                $this->validator->errors()->add('public_key', 'The public key provided is not valid.');
++                $this->validator->errors()->add('public_key', 'Der angegebene öffentliche Schlüssel ist ungültig.');
+ 
+                 return;
+             }
+@@ -48,22 +48,22 @@ class StoreSSHKeyRequest extends ClientApiRequest
              try {
-                 $this->key = PublicKeyLoader::loadPublicKey($this->input('public_key'));
+                 $this->key = PublicKeyLoader::loadPublicKey($publicKey);
              } catch (NoKeyLoadedException $exception) {
 -                $this->validator->errors()->add('public_key', 'The public key provided is not valid.');
 +                $this->validator->errors()->add('public_key', 'Der angegebene öffentliche Schlüssel ist ungültig.');
@@ -1140,7 +1175,7 @@ index b2e0007..349bdc4 100644
          ],
      ];
 diff --git a/app/Models/User.php b/app/Models/User.php
-index 02df0ca..a43aac3 100644
+index e0de1d4..c5d7ced 100644
 --- a/app/Models/User.php
 +++ b/app/Models/User.php
 @@ -157,7 +157,7 @@ class User extends Model implements
@@ -1627,7 +1662,7 @@ index 0000000..c385d14
 +}
 diff --git a/resources/lang/de/activity.php b/resources/lang/de/activity.php
 new file mode 100644
-index 0000000..b4def9e
+index 0000000..36c8185
 --- /dev/null
 +++ b/resources/lang/de/activity.php
 @@ -0,0 +1,133 @@
@@ -1703,7 +1738,7 @@ index 0000000..b4def9e
 +            'delete' => 'Datenbank :name gelöscht',
 +        ],
 +        'file' => [
-+            'compress_one' => ':directory:file komprimiert',
++            'compress_one' => ':directory:files.0 komprimiert',
 +            'compress_other' => ':count Dateien in :directory komprimiert',
 +            'read' => 'Inhalt von :file angesehen',
 +            'copy' => 'Kopie von :file erstellt',
@@ -2959,7 +2994,7 @@ index 4f64aec..6757a5a 100644
                  </ContentBox>
              </Container>
 diff --git a/resources/scripts/components/dashboard/ApiKeyModal.tsx b/resources/scripts/components/dashboard/ApiKeyModal.tsx
-index 6d01029..5f0aa10 100644
+index f634962..46f1f90 100644
 --- a/resources/scripts/components/dashboard/ApiKeyModal.tsx
 +++ b/resources/scripts/components/dashboard/ApiKeyModal.tsx
 @@ -14,10 +14,10 @@ const ApiKeyModal = ({ apiKey }: Props) => {
@@ -2974,7 +3009,7 @@ index 6d01029..5f0aa10 100644
 +                Der angeforderte API-Schlüssel wird unten angezeigt. Bewahre ihn an einem sicheren Ort auf, er wird
 +                nicht erneut angezeigt.
              </p>
-             <pre css={tw`text-sm bg-neutral-900 rounded py-2 px-4 font-mono`}>
+             <pre css={tw`overflow-x-scroll text-sm bg-neutral-900 rounded py-2 px-4 font-mono`}>
                  <CopyOnClick text={apiKey}>
 @@ -26,7 +26,7 @@ const ApiKeyModal = ({ apiKey }: Props) => {
              </pre>
@@ -3010,7 +3045,7 @@ index 23ad2e3..fedab92 100644
                          )
                      }
 diff --git a/resources/scripts/components/dashboard/ServerRow.tsx b/resources/scripts/components/dashboard/ServerRow.tsx
-index 08637bf..040fae6 100644
+index aa2b5a7..3e5d6d8 100644
 --- a/resources/scripts/components/dashboard/ServerRow.tsx
 +++ b/resources/scripts/components/dashboard/ServerRow.tsx
 @@ -84,9 +84,9 @@ export default ({ server, className }: { server: Server; className?: string }) =
@@ -3026,12 +3061,19 @@ index 08637bf..040fae6 100644
  
      return (
          <StatusIndicatorBox as={Link} to={`/server/${server.id}`} className={className} $status={stats?.status}>
-@@ -120,19 +120,19 @@ export default ({ server, className }: { server: Server; className?: string }) =
+@@ -120,25 +120,25 @@ export default ({ server, className }: { server: Server; className?: string }) =
                      isSuspended ? (
                          <div css={tw`flex-1 text-center`}>
                              <span css={tw`bg-red-500 rounded px-2 py-1 text-red-100 text-xs`}>
 -                                {server.status === 'suspended' ? 'Suspended' : 'Connection Error'}
 +                                {server.status === 'suspended' ? 'Gesperrt' : 'Verbindungsfehler'}
+                             </span>
+                         </div>
+                     ) : server.isNodeUnderMaintenance ? (
+                         <div css={tw`flex-1 text-center`}>
+                             <span css={tw`bg-yellow-500 rounded px-2 py-1 text-yellow-100 text-xs`}>
+-                                Under Maintenance
++                                Wartungsarbeiten
                              </span>
                          </div>
                      ) : server.isTransferring || server.status ? (
@@ -3051,7 +3093,7 @@ index 08637bf..040fae6 100644
                              </span>
                          </div>
                      ) : (
-@@ -147,7 +147,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
+@@ -153,7 +153,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
                                      {stats.cpuUsagePercent.toFixed(2)} %
                                  </IconDescription>
                              </div>
@@ -3060,7 +3102,7 @@ index 08637bf..040fae6 100644
                          </div>
                          <div css={tw`flex-1 ml-4 sm:block hidden`}>
                              <div css={tw`flex justify-center`}>
-@@ -156,7 +156,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
+@@ -162,7 +162,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
                                      {bytesToString(stats.memoryUsageInBytes)}
                                  </IconDescription>
                              </div>
@@ -3069,7 +3111,7 @@ index 08637bf..040fae6 100644
                          </div>
                          <div css={tw`flex-1 ml-4 sm:block hidden`}>
                              <div css={tw`flex justify-center`}>
-@@ -165,7 +165,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
+@@ -171,7 +171,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
                                      {bytesToString(stats.diskUsageInBytes)}
                                  </IconDescription>
                              </div>
@@ -4921,10 +4963,10 @@ index 0edb542..54bb20e 100644
              </DropdownMenu>
          </>
 diff --git a/resources/scripts/components/server/files/FileEditContainer.tsx b/resources/scripts/components/server/files/FileEditContainer.tsx
-index de44493..eb4f22c 100644
+index 9ca074b..14f4874 100644
 --- a/resources/scripts/components/server/files/FileEditContainer.tsx
 +++ b/resources/scripts/components/server/files/FileEditContainer.tsx
-@@ -94,10 +94,10 @@ export default () => {
+@@ -130,10 +130,10 @@ export default () => {
              {hash.replace(/^#/, '').endsWith('.pteroignore') && (
                  <div css={tw`mb-4 p-4 border-l-4 bg-neutral-900 rounded border-cyan-400`}>
                      <p css={tw`text-neutral-300 text-sm`}>
@@ -4939,7 +4981,7 @@ index de44493..eb4f22c 100644
                          <code css={tw`font-mono bg-black rounded py-px px-1`}>!</code>).
                      </p>
                  </div>
-@@ -142,13 +142,13 @@ export default () => {
+@@ -179,13 +179,13 @@ export default () => {
                  {action === 'edit' ? (
                      <Can action={'file.update'}>
                          <Button css={tw`flex-1 sm:flex-none`} onClick={() => save()}>
@@ -5032,7 +5074,7 @@ index 3e1c2df..008e86a 100644
                          className={'flex items-center justify-center w-10 h-10'}
                          onClick={() => (open.value = true)}
 diff --git a/resources/scripts/components/server/files/FileNameModal.tsx b/resources/scripts/components/server/files/FileNameModal.tsx
-index 3d0fb16..4c7333d 100644
+index 6e3aff6..070aa40 100644
 --- a/resources/scripts/components/server/files/FileNameModal.tsx
 +++ b/resources/scripts/components/server/files/FileNameModal.tsx
 @@ -29,7 +29,9 @@ export default ({ onFileNamed, onDismissed, ...props }: Props) => {
@@ -5057,8 +5099,8 @@ index 3d0fb16..4c7333d 100644
                              autoFocus
                          />
                          <div css={tw`mt-6 text-right`}>
--                            <Button>Create File</Button>
-+                            <Button>Datei erstellen</Button>
+-                            <Button type={'submit'}>Create File</Button>
++                            <Button type={'submit'}>Datei erstellen</Button>
                          </div>
                      </Form>
                  </Modal>
@@ -5150,7 +5192,7 @@ index 5d6ff42..910add9 100644
                              </div>
                          </Fade>
 diff --git a/resources/scripts/components/server/files/NewDirectoryButton.tsx b/resources/scripts/components/server/files/NewDirectoryButton.tsx
-index f7531a3..d87bb4a 100644
+index 30cb2b0..7a94b8d 100644
 --- a/resources/scripts/components/server/files/NewDirectoryButton.tsx
 +++ b/resources/scripts/components/server/files/NewDirectoryButton.tsx
 @@ -21,7 +21,7 @@ interface Values {
@@ -5161,9 +5203,9 @@ index f7531a3..d87bb4a 100644
 +    directoryName: string().required('Gib einen gültigen Ordnernamen ein.'),
  });
  
- const generateDirectoryData = (name: string): FileObject => ({
-@@ -40,7 +40,7 @@ const generateDirectoryData = (name: string): FileObject => ({
- });
+ const displayNameForDirectory = (name: string): string =>
+@@ -49,7 +49,7 @@ const generateDirectoryData = (name: string): FileObject => {
+ };
  
  const NewDirectoryDialog = asDialog({
 -    title: 'Create Directory',
@@ -5171,7 +5213,7 @@ index f7531a3..d87bb4a 100644
  })(() => {
      const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
      const directory = ServerContext.useStoreState((state) => state.files.directory);
-@@ -73,7 +73,7 @@ const NewDirectoryDialog = asDialog({
+@@ -82,7 +82,7 @@ const NewDirectoryDialog = asDialog({
                      <Form css={tw`m-0`}>
                          <Field autoFocus id={'directoryName'} name={'directoryName'} label={'Name'} />
                          <p css={tw`mt-2 text-sm md:text-base break-all`}>
@@ -5180,7 +5222,7 @@ index f7531a3..d87bb4a 100644
                              <Code>
                                  /home/container/
                                  <span css={tw`text-cyan-200`}>
-@@ -84,10 +84,10 @@ const NewDirectoryDialog = asDialog({
+@@ -93,10 +93,10 @@ const NewDirectoryDialog = asDialog({
                      </Form>
                      <Dialog.Footer>
                          <Button.Text className={'w-full sm:w-auto'} onClick={close}>
@@ -5193,7 +5235,7 @@ index f7531a3..d87bb4a 100644
                          </Button>
                      </Dialog.Footer>
                  </>
-@@ -103,7 +103,7 @@ export default ({ className }: WithClassname) => {
+@@ -112,7 +112,7 @@ export default ({ className }: WithClassname) => {
          <>
              <NewDirectoryDialog open={open} onClose={setOpen.bind(this, false)} />
              <Button.Text onClick={setOpen.bind(this, true)} className={className}>
@@ -5936,10 +5978,10 @@ index f54c0a2..3abadb4 100644
                      </div>
                  </Form>
 diff --git a/resources/scripts/components/server/settings/ReinstallServerBox.tsx b/resources/scripts/components/server/settings/ReinstallServerBox.tsx
-index 3a5a8da..dd9d42e 100644
+index 42f7a4a..430a8a2 100644
 --- a/resources/scripts/components/server/settings/ReinstallServerBox.tsx
 +++ b/resources/scripts/components/server/settings/ReinstallServerBox.tsx
-@@ -21,7 +21,7 @@ export default () => {
+@@ -22,7 +22,7 @@ export default () => {
                  addFlash({
                      key: 'settings',
                      type: 'success',
@@ -5948,8 +5990,22 @@ index 3a5a8da..dd9d42e 100644
                  });
              })
              .catch((error) => {
-@@ -37,28 +37,28 @@ export default () => {
-     }, []);
+@@ -39,38 +39,39 @@ export default () => {
+ 
+     if (skipScripts) {
+         return (
+-            <TitledGreyBox title={'Reinstall Server'}>
++            <TitledGreyBox title={'Server neu installieren'}>
+                 <p css={tw`text-sm`}>
+-                    Reinstalling this server has been disabled because it is configured to skip its egg&apos;s install
+-                    script. If you would like to reinstall this server, contact a server administrator.
++                    Die Neuinstallation dieses Servers ist deaktiviert, da er so konfiguriert ist, dass das
++                    Installationsskript seines Eggs übersprungen wird. Wenn du diesen Server neu installieren möchtest,
++                    wende dich an einen Administrator.
+                 </p>
+             </TitledGreyBox>
+         );
+     }
  
      return (
 -        <TitledGreyBox title={'Reinstall Server'} css={tw`relative`}>
@@ -6553,7 +6609,7 @@ index 4658ee9..979444a 100644
                      });
                  });
 diff --git a/resources/views/admin/api/new.blade.php b/resources/views/admin/api/new.blade.php
-index b5876ee..3535d42 100644
+index 712712c..fc82bdd 100644
 --- a/resources/views/admin/api/new.blade.php
 +++ b/resources/views/admin/api/new.blade.php
 @@ -1,15 +1,15 @@
@@ -6576,35 +6632,49 @@ index b5876ee..3535d42 100644
      </ol>
  @endsection
  
-@@ -19,7 +19,7 @@
+@@ -19,12 +19,12 @@
              <div class="col-sm-8 col-xs-12">
                  <div class="box box-primary">
                      <div class="box-header with-border">
 -                        <h3 class="box-title">Select Permissions</h3>
 +                        <h3 class="box-title">Berechtigungen festlegen</h3>
+                         <div class="box-tools">
+                             <div class="btn-group">
+-                                <button type="button" class="btn btn-sm btn-default" id="btn-bulk-read">Read All</button>
+-                                <button type="button" class="btn btn-sm btn-default" id="btn-bulk-rw">Read &amp; Write All</button>
+-                                <button type="button" class="btn btn-sm btn-default" id="btn-bulk-none">None All</button>
++                                <button type="button" class="btn btn-sm btn-default" id="btn-bulk-read">Alle: Lesen</button>
++                                <button type="button" class="btn btn-sm btn-default" id="btn-bulk-rw">Alle: Lesen &amp; Schreiben</button>
++                                <button type="button" class="btn btn-sm btn-default" id="btn-bulk-none">Alle: Keine Rechte</button>
+                             </div>
+                         </div>
                      </div>
-                     <div class="box-body table-responsive no-padding">
-                         <table class="table table-hover">
-@@ -28,15 +28,15 @@
-                                     <td class="col-sm-3 strong">{{ str_replace('_', ' ', title_case($resource)) }}</td>
-                                     <td class="col-sm-3 radio radio-primary text-center">
-                                         <input type="radio" id="r_{{ $resource }}" name="r_{{ $resource }}" value="{{ $permissions['r'] }}">
--                                        <label for="r_{{ $resource }}">Read</label>
-+                                        <label for="r_{{ $resource }}">Lesen</label>
+@@ -39,21 +39,21 @@
+                                     <td class="text-center" style="vertical-align: middle;">
+                                         <div class="radio radio-primary" style="margin: 0;">
+                                             <input type="radio" id="r_{{ $resource }}" name="r_{{ $resource }}" value="{{ $permissions['r'] }}">
+-                                            <label for="r_{{ $resource }}">Read</label>
++                                            <label for="r_{{ $resource }}">Lesen</label>
+                                         </div>
                                      </td>
-                                     <td class="col-sm-3 radio radio-primary text-center">
-                                         <input type="radio" id="rw_{{ $resource }}" name="r_{{ $resource }}" value="{{ $permissions['rw'] }}">
--                                        <label for="rw_{{ $resource }}">Read &amp; Write</label>
-+                                        <label for="rw_{{ $resource }}">Lesen &amp; Schreiben</label>
+                                     
+                                     <td class="text-center" style="vertical-align: middle;">
+                                         <div class="radio radio-primary" style="margin: 0;">
+                                             <input type="radio" id="rw_{{ $resource }}" name="r_{{ $resource }}" value="{{ $permissions['rw'] }}">
+-                                            <label for="rw_{{ $resource }}">Read &amp; Write</label>
++                                            <label for="rw_{{ $resource }}">Lesen &amp; Schreiben</label>
+                                         </div>
                                      </td>
-                                     <td class="col-sm-3 radio text-center">
-                                         <input type="radio" id="n_{{ $resource }}" name="r_{{ $resource }}" value="{{ $permissions['n'] }}" checked>
--                                        <label for="n_{{ $resource }}">None</label>
-+                                        <label for="n_{{ $resource }}">Keine Rechte</label>
+                                     
+                                     <td class="text-center" style="vertical-align: middle;">
+                                         <div class="radio" style="margin: 0;">
+                                             <input type="radio" id="n_{{ $resource }}" name="r_{{ $resource }}" value="{{ $permissions['n'] }}" checked>
+-                                            <label for="n_{{ $resource }}">None</label>
++                                            <label for="n_{{ $resource }}">Keine Rechte</label>
+                                         </div>
                                      </td>
                                  </tr>
-                             @endforeach
-@@ -48,14 +48,14 @@
+@@ -66,14 +66,14 @@
                  <div class="box box-primary">
                      <div class="box-body">
                          <div class="form-group">
@@ -7172,7 +7242,7 @@ index 5bbc9ee..1d97bac 100644
              </div>
          </div>
 diff --git a/resources/views/admin/eggs/variables.blade.php b/resources/views/admin/eggs/variables.blade.php
-index fbc1478..0bb5364 100644
+index 0940526..3b4f567 100644
 --- a/resources/views/admin/eggs/variables.blade.php
 +++ b/resources/views/admin/eggs/variables.blade.php
 @@ -1,17 +1,17 @@
@@ -7256,8 +7326,8 @@ index fbc1478..0bb5364 100644
 -                            <label class="form-label">Input Rules</label>
 +                            <label class="form-label">Eingaberegeln</label>
                              <input type="text" name="rules" class="form-control" value="{{ $variable->rules }}" />
--                            <p class="text-muted small">These rules are defined using standard <a href="https://laravel.com/docs/5.7/validation#available-validation-rules" target="_blank">Laravel Framework validation rules</a>.</p>
-+                            <p class="text-muted small">Diese Regeln werden mit den standardmäßigen <a href="https://laravel.com/docs/5.7/validation#available-validation-rules" target="_blank">Validierungsregeln des Laravel-Frameworks</a> definiert.</p>
+-                            <p class="text-muted small">These rules are defined using standard <a href="https://laravel.com/docs/11.x/validation#available-validation-rules" target="_blank">Laravel Framework validation rules</a>.</p>
++                            <p class="text-muted small">Diese Regeln werden mit den standardmäßigen <a href="https://laravel.com/docs/11.x/validation#available-validation-rules" target="_blank">Validierungsregeln des Laravel-Frameworks</a> definiert.</p>
                          </div>
                      </div>
                      <div class="box-footer">
@@ -7316,8 +7386,8 @@ index fbc1478..0bb5364 100644
 -                        <label class="control-label">Input Rules <span class="field-required"></span></label>
 +                        <label class="control-label">Eingaberegeln <span class="field-required"></span></label>
                          <input type="text" name="rules" class="form-control" value="{{ old('rules', 'required|string|max:20') }}" placeholder="required|string|max:20" />
--                        <p class="text-muted small">These rules are defined using standard <a href="https://laravel.com/docs/5.7/validation#available-validation-rules" target="_blank">Laravel Framework validation rules</a>.</p>
-+                        <p class="text-muted small">Diese Regeln werden mit den standardmäßigen <a href="https://laravel.com/docs/5.7/validation#available-validation-rules" target="_blank">Validierungsregeln des Laravel-Frameworks</a> definiert.</p>
+-                        <p class="text-muted small">These rules are defined using standard <a href="https://laravel.com/docs/11.x/validation#available-validation-rules" target="_blank">Laravel Framework validation rules</a>.</p>
++                        <p class="text-muted small">Diese Regeln werden mit den standardmäßigen <a href="https://laravel.com/docs/11.x/validation#available-validation-rules" target="_blank">Validierungsregeln des Laravel-Frameworks</a> definiert.</p>
                      </div>
                  </div>
                  <div class="modal-footer">
@@ -7552,7 +7622,7 @@ index 0f1e652..b75e984 100644
          $(this).find('i').html('');
      });
 diff --git a/resources/views/admin/index.blade.php b/resources/views/admin/index.blade.php
-index 817766e..0b9fda0 100644
+index 9652532..147c9e0 100644
 --- a/resources/views/admin/index.blade.php
 +++ b/resources/views/admin/index.blade.php
 @@ -5,10 +5,10 @@
@@ -7580,8 +7650,8 @@ index 817766e..0b9fda0 100644
 -                    You are running Pterodactyl Panel version <code>{{ config('app.version') }}</code>. Your panel is up-to-date!
 +                    Du nutzt die Pterodactyl-Panel-Version <code>{{ config('app.version') }}</code>. Dein Panel ist auf dem neuesten Stand!
                  @else
--                    Your panel is <strong>not up-to-date!</strong> The latest version is <a href="https://github.com/Pterodactyl/Panel/releases/v{{ $version->getPanel() }}" target="_blank"><code>{{ $version->getPanel() }}</code></a> and you are currently running version <code>{{ config('app.version') }}</code>.
-+                    Dein Panel ist <strong>nicht aktuell!</strong> Die neueste Version ist <a href="https://github.com/Pterodactyl/Panel/releases/v{{ $version->getPanel() }}" target="_blank"><code>{{ $version->getPanel() }}</code></a>, du nutzt derzeit die Version <code>{{ config('app.version') }}</code>. <hr>WARNUNG: Du nutzt GermanDactyl für die Übersetzung. Für die neueste Version steht möglicherweise noch keine Übersetzung zur Verfügung!
+-                    Your panel is <strong>not up-to-date!</strong> The latest version is <a href="https://github.com/Pterodactyl/Panel/releases/v{{ $version->getPanel() }}" target="_blank"><code>{{ $version->getPanel() }}</code></a> and you are currently running version <code>{{ config('app.version') }}</code>. You can find instructions on how to update your panel <a href="https://pterodactyl.io/panel/1.0/updating.html">here</a>.
++                    Dein Panel ist <strong>nicht aktuell!</strong> Die neueste Version ist <a href="https://github.com/Pterodactyl/Panel/releases/v{{ $version->getPanel() }}" target="_blank"><code>{{ $version->getPanel() }}</code></a>, du nutzt derzeit die Version <code>{{ config('app.version') }}</code>. Eine Anleitung zum Aktualisieren deines Panels findest du <a href="https://pterodactyl.io/panel/1.0/updating.html">hier</a>. <hr>WARNUNG: Du nutzt GermanDactyl für die Übersetzung. Für die neueste Version steht möglicherweise noch keine Übersetzung zur Verfügung!
                  @endif
              </div>
          </div>
@@ -10553,7 +10623,7 @@ index f94c6d4..d35379c 100644
                          </div>
                      </div>
 diff --git a/resources/views/admin/servers/view/manage.blade.php b/resources/views/admin/servers/view/manage.blade.php
-index 5b3dec9..4730b68 100644
+index 470e55c..b450a6f 100644
 --- a/resources/views/admin/servers/view/manage.blade.php
 +++ b/resources/views/admin/servers/view/manage.blade.php
 @@ -1,16 +1,16 @@
@@ -10577,7 +10647,7 @@ index 5b3dec9..4730b68 100644
      </ol>
  @endsection
  
-@@ -20,19 +20,19 @@
+@@ -20,22 +20,22 @@
          <div class="col-sm-4">
              <div class="box box-danger">
                  <div class="box-header with-border">
@@ -10589,7 +10659,12 @@ index 5b3dec9..4730b68 100644
 +                    <p>Dadurch wird der Server mit den zugewiesenen Installationsskripten neu installiert. <strong>Achtung!</strong> Dabei können Serverdaten überschrieben werden.</p>
                  </div>
                  <div class="box-footer">
-                     @if($server->isInstalled())
+                     @if(! $server->canBeReinstalled())
+-                        <button class="btn btn-danger disabled">Reinstall Server</button>
+-                        <p style="padding-top: 1rem;">This server is set to skip its install script. Disable "Skip Egg Install Script" on the startup page to reinstall it.</p>
++                        <button class="btn btn-danger disabled">Server neu installieren</button>
++                        <p style="padding-top: 1rem;">Dieser Server überspringt sein Installationsskript. Deaktiviere auf der Seite „Start“ die Option „Installationsskript des Eggs überspringen“, um ihn neu zu installieren.</p>
+                     @elseif($server->isInstalled())
                          <form action="{{ route('admin.servers.view.manage.reinstall', $server->id) }}" method="POST">
                              {!! csrf_field() !!}
 -                            <button type="submit" class="btn btn-danger">Reinstall Server</button>
@@ -10601,7 +10676,7 @@ index 5b3dec9..4730b68 100644
                      @endif
                  </div>
              </div>
-@@ -40,15 +40,15 @@
+@@ -43,15 +43,15 @@
          <div class="col-sm-4">
              <div class="box box-primary">
                  <div class="box-header with-border">
@@ -10620,7 +10695,7 @@ index 5b3dec9..4730b68 100644
                      </form>
                  </div>
              </div>
-@@ -58,16 +58,16 @@
+@@ -61,16 +61,16 @@
              <div class="col-sm-4">
                  <div class="box box-warning">
                      <div class="box-header with-border">
@@ -10640,7 +10715,7 @@ index 5b3dec9..4730b68 100644
                          </form>
                      </div>
                  </div>
-@@ -76,16 +76,16 @@
+@@ -79,16 +79,16 @@
              <div class="col-sm-4">
                  <div class="box box-success">
                      <div class="box-header with-border">
@@ -10660,7 +10735,7 @@ index 5b3dec9..4730b68 100644
                          </form>
                      </div>
                  </div>
-@@ -96,21 +96,21 @@
+@@ -99,21 +99,21 @@
              <div class="col-sm-4">
                  <div class="box box-success">
                      <div class="box-header with-border">
@@ -10688,7 +10763,7 @@ index 5b3dec9..4730b68 100644
                          @endif
                      </div>
                  </div>
-@@ -119,17 +119,17 @@
+@@ -122,17 +122,17 @@
              <div class="col-sm-4">
                  <div class="box box-success">
                      <div class="box-header with-border">
@@ -10710,7 +10785,7 @@ index 5b3dec9..4730b68 100644
                      </div>
                  </div>
              </div>
-@@ -141,8 +141,8 @@
+@@ -144,8 +144,8 @@
              <div class="modal-content">
                  <form action="{{ route('admin.servers.view.manage.transfer', $server->id) }}" method="POST">
                      <div class="modal-header">
@@ -10721,7 +10796,7 @@ index 5b3dec9..4730b68 100644
                      </div>
  
                      <div class="modal-body">
-@@ -164,27 +164,27 @@
+@@ -167,27 +167,27 @@
                                          </optgroup>
                                      @endforeach
                                  </select>

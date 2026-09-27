@@ -1,9 +1,26 @@
-Hier findest du die häufig gestellten Fragen zusammengefasst. Wenn du etwas nicht finden solltest, dann kannst du gerne bei uns ein Support-Ticket [im Discord](https://discord.gg/CzQYSpNmdd) öffnen.
+# FAQ
 
-??? error "Es wird nach dem Update nur noch Deutsch vorgeschlagen. Wie ändere ich die Sprache?"
-Die Entwickler von Pterodactyl hatten früher mal ein System, mit der man auf mehrere Sprachen wechseln konnte. Leider hat sich das nicht durchgesetzt und sie haben es nur noch in englischer Sprache weiterentwickelt, somit sind alle alten Sprachen nicht mehr kompatibel.
-GermanDactyl tut somit nicht mehr als die englisch geschriebenen Wörter mit deutschen zu ersetzen. Somit ist eine Änderung der Sprache nicht mehr möglich.
-Wenn du nach der Installation von GermanDactyl wieder zurück zur englischen Variante möchtest, dann musst du alle optischen Änderungen zurücksetzen. Befolge dafür [diese Anleitung](https://germandactyl.de/guides/update/).
+Hier findest du die häufig gestellten Fragen. Findest du etwas nicht, kannst du gerne ein Support-Ticket
+[in unserem Discord](https://discord.gg/6R38NnTCct) öffnen.
 
-??? error "Ich habe Fehler in der Übersetzung gefunden. Wie kann ich das melden?"
-Wenn du einen Schreibfehler oder etwas auf Englisch gefunden hast, obwohl du GermanDactyl installiert hast, dann kannst du den Fehler bei uns im Discord-Server im Reiter **Testübersetzungen** einreichen. Im Textchannel *#einreichen* findest du die Erklärung, wie du das machen kannst. Wir danken jeden, der uns dabei helfen möchte, GermanDactyl besser zu machen. 
+??? question "Kann ich zwischen Deutsch und Englisch wechseln?"
+    Ja, teilweise. GermanDactyl fügt Deutsch als eigene Sprache hinzu, Englisch bleibt erhalten. Der Installer stellt
+    die Standardsprache des Panels und alle bestehenden Benutzer auf Deutsch, neue Benutzer bekommen ebenfalls
+    Deutsch.
+
+    Unter **Admin → Benutzer** kannst du die Sprache einzelner Benutzer ändern. Viele Texte sind in Pterodactyl
+    allerdings fest in die Oberfläche eingebaut – diese bleiben auch bei Englisch deutsch.
+
+??? question "Wie komme ich komplett zurück zur englischen Version?"
+    Führe den Installer mit `-u` aus oder setze das Panel manuell zurück. Beides ist unter
+    [Deinstallation](uninstall.md) beschrieben.
+
+??? question "Nach einem Panel-Update ist wieder alles auf Englisch. Warum?"
+    Ein Panel-Update überschreibt die Übersetzung. Führe GermanDactyl nach dem Update einfach erneut aus – siehe
+    [Update ausführen](guides/update.md).
+
+??? question "Ich habe Fehler in der Übersetzung gefunden. Wie kann ich das melden?"
+    Hast du einen Schreibfehler oder etwas auf Englisch entdeckt, melde es gerne als
+    [Issue](https://github.com/pavl21/GermanDactyl/issues) oder bei uns im Discord im Kanal *#einreichen*. Du kannst
+    die Korrektur auch direkt [per Pull Request einreichen](guides/contribute.md). Wir danken jedem, der uns hilft,
+    GermanDactyl besser zu machen.

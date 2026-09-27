@@ -1,9 +1,10 @@
 site_name: GermanDactyl Dokumentation
-copyright: Copyright &copy; 2023 Paul Schwarz
+site_url: https://germandactyl.de/
+copyright: Copyright &copy; 2023–2026 Paul Schwarz
 
 repo_name: GermanDactyl
 repo_url: https://github.com/pavl21/GermanDactyl
-edit_uri: https://github.com/pavl21/GermanDactyl/main/docs
+edit_uri: edit/main/docs/
 
 theme:
   name: material
@@ -15,7 +16,7 @@ theme:
   favicon: assets/images/logo.png
   palette:
     - media: "(prefers-color-scheme: light)"
-      schema: default
+      scheme: default
       primary: indigo
       toggle:
         icon: material/brightness-7
@@ -32,12 +33,10 @@ extra:
   social:
     - icon: fontawesome/brands/tiktok
       link: https://www.tiktok.com/@paul_schwarz_
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/Paul_Schwarz_
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/Paul_Schwarz_
     - icon: fontawesome/brands/discord
-      link: https://discord.com/users/289810872396808193
-    - icon: fontawesome/solid/globe
-      link: https://sierra-dev.de/
+      link: https://discord.gg/6R38NnTCct
 
 markdown_extensions:
   - attr_list
@@ -48,16 +47,15 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 nav:
   - Start: index.md
   - Installation: installation.md
+  - Deinstallation: uninstall.md
   - GermanDactyl Setup: guides/setup.md
-  - Addons:
-        - Bald: 404.md
-  - Guides:
+  - Anleitungen:
       - Update ausführen: guides/update.md
       - Übersetzungen einreichen: guides/contribute.md
   - Fehlerbehebung: troubleshooting.md

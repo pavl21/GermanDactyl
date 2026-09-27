@@ -1,83 +1,53 @@
-Pterodactyl hat ein neues Update bekommen? Folge diesem Guide und die Installation wird kein Problem.
+# Update ausführen
 
-!!! danger "Gibt es schon ein GermanDactyl-Update?"
-    Nur weil ein Pterodactyl-Update vorliegt, heißt das nicht, dass automatisch auch GermanDactyl schon aktualisiert 
-    wurde. Vergewissere dich vorher [hier](https://github.com/pavl21/GermanDactyl/tree/main/patches), ob GermanDactyl
-    schon für die neue Pterodactyl-Version verfügbar ist. Falls nicht, habe noch etwas Geduld.
+Pterodactyl hat ein neues Update bekommen? Mit dieser Anleitung ist das kein Problem.
 
-## Installation des Panels
+!!! danger "Gibt es schon einen passenden GermanDactyl-Patch?"
+    Nur weil ein Pterodactyl-Update erschienen ist, gibt es nicht automatisch auch schon einen GermanDactyl-Patch
+    dafür. Prüfe vorher in der [Tabelle der unterstützten Versionen](../installation.md#unterstutzte-versionen), ob
+    die neue Version bereits unterstützt wird. Falls nicht, hab noch etwas Geduld.
 
-Zuerst muss das Panel auf die neuste Version gebracht werden. Eine detaillierte Zusammenfassung findest 
-du [hier](https://pterodactyl.io/panel/updating.html). Hier nochmal eine kurze Zusammenfassung:
+!!! warning "Das Update überschreibt die Übersetzung"
+    Nach jedem Panel-Update ist das Panel wieder auf Englisch. Führe GermanDactyl danach einfach erneut aus.
 
-1. Schalte den Wartungsmodus ein
-   ```shell
-   cd /var/www/pterodactyl #(1)
-   php artisan down
-   ```
-    1. Hier wurde als Beispiel `/var/www/pterodactyl` verwendet. Solltest du pterodactyl unter einem anderen Pfad
-       installiert haben, ändere dies ab.
+## 1. Panel aktualisieren
 
-2. Lade das Update herunter
-   ```shell
-   curl -L https://github.com/pterodactyl/panel/releases/latest/download/panel.tar.gz | tar -xzv
-   ```
-   ```shell
-   chmod -R 755 storage/* bootstrap/cache
-   ```
-
-3. Installiere alle Dependency- und Datenbankupdates
-   ```shell
-   composer install --no-dev --optimize-autoloader
-   ```
-   ```shell
-   php artisan migrate --seed --force
-   ```
-
-4. Löschen des Zwischenspeichers für kompilierte Vorlagen
-   ```shell
-   php artisan view:clear
-   ```
-   ```shell
-   php artisan config:clear
-   ```
-
-5. Setze die Berechtigungen
-   ```shell
-   chown -R www-data:www-data /var/www/pterodactyl/* #NGINX oder Apache (nicht auf CentOS) 
-   chown -R nginx:nginx /var/www/pterodactyl/* #NGINX auf CentOS
-   chown -R apache:apache /var/www/pterodactyl/* #Apache auf CentOS
-   ```
-
-6. Neustart von Queue Workern
-   ```shell
-   php artisan queue:restart
-   ```
-
-7. Wartungsmodus beenden
-   ```shell
-   php artisan up 
-   ```
-
-## Installation von GermanDactyl
-
-Jetzt wo Pterodactyl installiert ist können wir erneut die Patches anwenden, sodass das Panel wieder auf Deutsch
-eingestellt wird.
-
-??? warning "Hast du Probleme mit diesem Befehl?"
-    Für den Fall, dass du Pterodactyl unter einem anderen Pfad installiert hast als `/var/www/pterodactyl` oder das
-    Skript einfach nicht bei dir funktioniert, lohnt es sich, die 
-    [Installationsanleitung](/installation/) mal anzusehen.
+Aktualisiere zuerst das Panel. Die ausführliche Anleitung findest du in der
+[offiziellen Dokumentation](https://pterodactyl.io/panel/1.0/updating.html) – dort stehen auch die Voraussetzungen
+(z. B. PHP 8.2/8.3 und Composer 2). Hier die Kurzfassung, im Beispiel liegt das Panel unter `/var/www/pterodactyl`:
 
 ```shell
-curl -sSL https://install.germandactyl.de/ | sudo bash -s --
+cd /var/www/pterodactyl
+php artisan down
+
+curl -L https://github.com/pterodactyl/panel/releases/latest/download/panel.tar.gz | tar -xz
+chmod -R 755 storage/* bootstrap/cache
+
+composer install --no-dev --optimize-autoloader
+php artisan view:clear && php artisan config:clear
+php artisan migrate --seed --force
 ```
 
-## Installation deiner Add-ons
+Beende den Wartungsmodus noch **nicht** – erst nach GermanDactyl (Schritt 3).
 
-Jetzt kommt der Moment wo du alle Add-ons installieren kannst. Folge dafür der Anleitung des jeweiligen Add-ons.
+## 2. GermanDactyl erneut ausführen
 
-## Fertig
+```shell
+curl -sSL https://install.germandactyl.de/ | sudo bash -s -- -y
+```
 
-Sowohl Pterodactyl als auch GermanDactyl wurden nun aktualisiert und können erneut verwendet werden. Sollten nun
-weitere Probleme auftreten, schau dir den [Guide zur Fehlerbehebung](/troubleshooting/) an.
+Der Installer wendet den Patch an, baut die Oberfläche und setzt die Rechte. Liegt dein
+Panel woanders, hänge `-d <pfad>` an – alle Optionen findest du in der [Installationsanleitung](../installation.md).
+
+## 3. Abschließen
+
+Starte die Queue-Worker neu und prüfe, ob das Panel wieder erreichbar ist:
+
+```shell
+php artisan queue:restart
+php artisan up
+```
+
+Installiere danach bei Bedarf deine Add-ons erneut und folge dabei der jeweiligen Anleitung.
+
+Treten Probleme auf, schau in die [Fehlerbehebung](../troubleshooting.md).
