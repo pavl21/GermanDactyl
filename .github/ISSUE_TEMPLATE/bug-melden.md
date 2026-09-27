@@ -28,7 +28,7 @@ Wie soll's richtig sein?
 3.
 
 **Log-Auszug**
-Bei Installationsproblemen: die letzten Zeilen aus `germandactyl.debug.log` im Panel-Ordner (z. B. `tail -n 50 /var/www/pterodactyl/germandactyl.debug.log`).
+Bei Installationsproblemen: die letzten Zeilen aus dem Log (z. B. `tail -n 50 /var/log/germandactyl.log`).
 
 ```
 Log hier einfügen

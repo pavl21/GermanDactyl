@@ -1,28 +1,28 @@
 # Fehlerbehebung
 
 Hier findest du alle Lösungen, die wir kennen. Tritt bei dir ein unbekannter Fehler auf, eröffne ein
-[Issue](https://github.com/pavl21/GermanDactyl/issues) und hänge einen Auszug aus `germandactyl.debug.log`
+[Issue](https://github.com/pavl21/GermanDactyl/issues) und hänge einen Auszug aus `/var/log/germandactyl.log`
 (im Panel-Ordner) an, damit wir dir helfen können.
 
-??? error "In diesem Ordner wurde keine Pterodactyl-Instanz gefunden. Bitte verwende einen anderen Pfad."
+??? error "Unter … wurde kein Pterodactyl-Panel gefunden. Gib den richtigen Pfad mit -d <pfad> an."
     Dieser Fehler tritt meistens auf, wenn Pterodactyl nicht unter `/var/www/pterodactyl` installiert wurde. Ist das
     der Fall, hänge `-d /dein/panel/pfad` an den Befehl an. Mehr dazu [in der Installationsanleitung](installation.md).
 
     Stimmt der Pfad und der Fehler erscheint trotzdem, prüfe die Zugriffsrechte: Die Datei `config/app.php` im
     Panel-Ordner muss lesbar sein.
 
-??? error "Du hast mit diesem Account nicht genügend Rechte, um die Installation zu starten."
+??? error "Bitte führe das Skript als root aus (z. B. mit sudo)."
     Hast du das `sudo` vergessen? Der Installer muss als `root` laufen. Prüfe, ob du als `root` angemeldet bist oder
     ob im Befehl `sudo bash` steht.
 
-??? error "Leider gibt es aktuell noch keinen Patch für diese Version."
+??? error "Für die Panel-Version … gibt es noch keinen GermanDactyl-Patch."
     Für deine Panel-Version gibt es keinen eigenen Patch. Schau in die
     [Tabelle der unterstützten Versionen](installation.md#unterstutzte-versionen). Bei 1.13.x, 1.14.x oder 1.15.0
     [aktualisierst du das Panel](guides/update.md) am besten auf 1.15.1.
 
     Meldet dein Panel die Version `canary`, wurde es per Git installiert. Gib die Version dann mit `-v <version>` an.
 
-??? error "_xy_ konnte nicht gepatcht werden. Hat ein Add-on diese Datei überschrieben?"
+??? error "Der Patch passt nicht vollständig zu deinem Panel. Betroffene Dateien: …"
     Dafür gibt es meist zwei Gründe:
 
     1. Die Datei wurde bereits von GermanDactyl gepatcht.
@@ -39,7 +39,7 @@ Hier findest du alle Lösungen, die wir kennen. Tritt bei dir ein unbekannter Fe
     - **Zu wenig Arbeitsspeicher:** Der Build braucht mindestens 2 GB RAM. Lege bei Bedarf eine Swap-Datei an.
     - **Falsche Node-Version:** Prüfe mit `node -v`, ob Node.js 22 oder neuer installiert ist.
 
-    Die genaue Fehlermeldung findest du in `germandactyl.debug.log` im Panel-Ordner. Die Backups liegen unter
+    Die genaue Fehlermeldung findest du in `/var/log/germandactyl.log` (Fallback: `germandactyl.debug.log` im Panel-Ordner). Die Backups liegen unter
     `/var/backups/germandactyl/`.
 
 ??? error "Das Panel ist nach dem Update oder der Installation nur noch weiß"

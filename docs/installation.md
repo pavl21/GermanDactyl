@@ -72,7 +72,7 @@ Füge den folgenden Befehl in die Konsole deines Servers ein. GermanDactyl insta
 7. **Cache leeren** und **Rechte setzen**, danach Wartungsmodus beenden.
 
 Schlägt der Build fehl, wird das Backup automatisch wiederhergestellt. Alle Ausgaben landen in
-`germandactyl.debug.log` im Panel-Ordner.
+`/var/log/germandactyl.log` (Fallback: `germandactyl.debug.log` im Panel-Ordner).
 
 !!! tip "Sprache pro Benutzer"
     Unter **Admin → Benutzer** kannst du die Sprache einzelner Benutzer wieder auf Englisch stellen. Die fest
