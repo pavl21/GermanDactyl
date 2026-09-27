@@ -636,6 +636,12 @@
     Der Patch landet unter <code>patches/v&lt;version&gt;.patch</code>.</li>
 <li><strong>Pull Request</strong> mit dem aktualisierten Patch eröffnen und kurz beschreiben, was du geändert hast.</li>
 </ol>
+<div class="admonition info">
+<p class="admonition-title">Signatur</p>
+<p>Neue oder geänderte Patches müssen signiert werden, sonst lehnt der Installer sie ab. Das übernimmt der
+Maintainer beim Merge mit <code>./scripts/createPatch.sh --sign</code>. In deinem Pull Request darf der Workflow
+„Patches prüfen“ deshalb fehlschlagen.</p>
+</div>
 <h2 id="richtlinien">Richtlinien</h2>
 <ul>
 <li>Wir sprechen die Nutzer mit <strong>Du</strong> an.</li>
