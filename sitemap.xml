@@ -1,3 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://germandactyl.de/</loc>
+         <lastmod>2026-09-27</lastmod>
+    </url>
+    <url>
+         <loc>https://germandactyl.de/faq/</loc>
+         <lastmod>2026-09-27</lastmod>
+    </url>
+    <url>
+         <loc>https://germandactyl.de/installation/</loc>
+         <lastmod>2026-09-27</lastmod>
+    </url>
+    <url>
+         <loc>https://germandactyl.de/troubleshooting/</loc>
+         <lastmod>2026-09-27</lastmod>
+    </url>
+    <url>
+         <loc>https://germandactyl.de/uninstall/</loc>
+         <lastmod>2026-09-27</lastmod>
+    </url>
+    <url>
+         <loc>https://germandactyl.de/guides/contribute/</loc>
+         <lastmod>2026-09-27</lastmod>
+    </url>
+    <url>
+         <loc>https://germandactyl.de/guides/setup/</loc>
+         <lastmod>2026-09-27</lastmod>
+    </url>
+    <url>
+         <loc>https://germandactyl.de/guides/update/</loc>
+         <lastmod>2026-09-27</lastmod>
+    </url>
 </urlset>
