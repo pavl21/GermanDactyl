@@ -17,6 +17,11 @@ Vielen Dank, dass du GermanDactyl verbessern möchtest! So läuft ein Beitrag ab
     Der Patch landet unter `patches/v<version>.patch`.
 5. **Pull Request** mit dem aktualisierten Patch eröffnen und kurz beschreiben, was du geändert hast.
 
+!!! info "Signatur"
+    Neue oder geänderte Patches müssen signiert werden, sonst lehnt der Installer sie ab. Das übernimmt der
+    Maintainer beim Merge mit `./scripts/createPatch.sh --sign`. In deinem Pull Request darf der Workflow
+    „Patches prüfen“ deshalb fehlschlagen.
+
 ## Richtlinien
 
 - Wir sprechen die Nutzer mit **Du** an.

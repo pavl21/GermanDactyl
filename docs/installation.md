@@ -78,6 +78,19 @@ Schlägt der Build fehl, wird das Backup automatisch wiederhergestellt. Alle Aus
     Unter **Admin → Benutzer** kannst du die Sprache einzelner Benutzer wieder auf Englisch stellen. Die fest
     eingebauten Oberflächentexte bleiben jedoch deutsch.
 
+### Signierte Patches
+
+Der Installer wendet nur Patches an, deren SHA-256-Prüfsumme in der signierten Liste
+[`patches/SHA256SUMS`](https://github.com/pavl21/GermanDactyl/blob/main/patches/SHA256SUMS) steht. Die Signatur
+prüft er mit `gpgv` gegen den im Skript fest hinterlegten Schlüssel. Ist die Signatur ungültig oder wurde der Patch
+verändert, bricht die Installation ab, ohne etwas am Panel zu ändern.
+
+Manuell prüfen kannst du einen Patch so:
+
+```bash
+gpg --verify SHA256SUMS.asc SHA256SUMS && sha256sum --ignore-missing -c SHA256SUMS
+```
+
 ## Patches manuell anwenden
 
 Funktioniert die automatische Installation bei dir nicht (z. B. weil deine Distribution nicht unterstützt wird),
