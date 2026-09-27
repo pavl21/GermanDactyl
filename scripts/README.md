@@ -27,7 +27,8 @@ Voraussetzungen: root-Rechte, PHP 8.2/8.3, etwa 2 GB RAM (inkl. Swap) für den B
 
 Das Skript
 
-- lädt den passenden Patch und prüft ihn mit `git apply --check`. Ist er schon installiert, bricht es ohne Änderungen ab.
+- lädt den passenden Patch und prüft seine Signatur: Die SHA-256-Prüfsumme muss in der signierten Liste `patches/SHA256SUMS` stehen (geprüft mit `gpgv` gegen den im Skript hinterlegten Schlüssel). Stimmt etwas nicht, bricht das Skript ohne Änderungen ab.
+- prüft den Patch mit `git apply --check`. Ist er schon installiert, bricht es ohne Änderungen ab.
 - sichert `app`, `resources`, `public`, `database`, `routes` und `config` nach `/var/backups/germandactyl/`.
 - versetzt das Panel während der Arbeiten in den Wartungsmodus.
 - wendet den Patch an und baut das Panel neu (`yarn install --frozen-lockfile`, `yarn run build:production`).
@@ -47,3 +48,13 @@ Schlägt der Build fehl, spielt das Skript das Backup automatisch zurück. Alle 
 `startPatching.sh` bricht ab, wenn du nicht auf `main` bist, dein Arbeitsverzeichnis nicht sauber ist oder der Branch `patches` bzw. der Tag `base` noch von einem früheren Lauf existiert. Anschließend wendet es den neuesten vorhandenen Patch an, der nicht neuer als die Zielversion ist.
 
 `createPatch.sh` schreibt `patches/<version>.patch` (z. B. `patches/v1.15.1.patch`), wechselt zurück auf `main` und räumt den Patch-Modus auf. Danach trägst du die Version selbst in [`patches/README.md`](../patches/README.md) und in `KNOWN_PATCHES` in `install.sh` ein.
+
+## Patches signieren
+
+`createPatch.sh` erzeugt nach jedem neuen Patch `patches/SHA256SUMS` und signiert die Liste mit GPG (`patches/SHA256SUMS.asc`). Nur signieren (z. B. nach einer Korrektur an einem Patch):
+
+```bash
+GERMANDACTYL_SIGNING_KEY=<Fingerabdruck> ./scripts/createPatch.sh --sign
+```
+
+Der Workflow „Patches prüfen“ verhindert, dass unsignierte oder veränderte Patches nach `main` gelangen – der Installer würde sie sonst ablehnen.

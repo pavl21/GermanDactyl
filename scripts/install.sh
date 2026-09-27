@@ -26,6 +26,13 @@ set -Eeuo pipefail
 readonly DEFAULT_PATH=/var/www/pterodactyl
 readonly PATCH_SERVER=https://patch.germandactyl.de
 readonly PATCH_LIST_API=https://api.github.com/repos/pavl21/GermanDactyl/contents/patches
+readonly SIGNATURE_BASE=https://raw.githubusercontent.com/pavl21/GermanDactyl/main/patches
+
+# Öffentlicher Schlüssel, mit dem patches/SHA256SUMS signiert wird.
+# SIGNING_KEY_FPR: Fingerabdruck (40 Hex-Zeichen, ohne Leerzeichen)
+# SIGNING_KEY_B64: gpg --export <Fingerabdruck> | base64 -w0
+readonly SIGNING_KEY_FPR="2CB69766DC1E05E8D805D4C0DF5A303D401576B8"
+readonly SIGNING_KEY_B64="mDMEarlszRYJKwYBBAHaRw8BAQdA1wvFzK9PQQL8O8H7ZEZVUyNka2ss34DjIkIBxWpClgy0NEdlcm1hbkRhY3R5bCBQYXRjaCBTaWduaW5nIChodHRwczovL2dlcm1hbmRhY3R5bC5kZSmIkwQTFgoAOxYhBCy2l2bcHgXo2AXUwN9aMD1AFXa4BQJquWzNAhsDBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEN9aMD1AFXa41lABAKJvPQhh6P4CKW54qnN6pCKuYa+ZbY6/rSxUnXToMNxrAQDyL23730jn08Pu6UaSTZQZ/wnXJznaQFuudwFuMpORBg=="
 readonly PANEL_RELEASES=https://github.com/pterodactyl/panel/releases/download
 readonly BACKUP_ROOT=/var/backups/germandactyl
 readonly MIN_NODE_MAJOR=22
@@ -316,6 +323,73 @@ download_patch() {
         DOWNLOAD_CODE=invalid
         return 1
     fi
+    if ! verify_patch; then
+        DOWNLOAD_CODE=unverified
+        return 1
+    fi
+}
+
+ensure_gpgv() {
+    command -v gpgv >/dev/null 2>&1 && return 0
+    detect_distro
+    require_apt "gpgv (zum Prüfen der Signatur)"
+    send_info "gpgv wird installiert …"
+    apt_install gpgv
+}
+
+# Prüft den Patch in $PATCH_FILE gegen die signierte Prüfsummenliste.
+# Bei einem Fehler steht der Grund in VERIFY_ERROR.
+VERIFY_ERROR=""
+verify_patch() {
+    local dir="$TMP_DIR/signature" name expected actual
+
+    if [[ ! $SIGNING_KEY_FPR =~ ^[0-9A-F]{40}$ ]] || [[ $SIGNING_KEY_B64 == __* ]]; then
+        VERIFY_ERROR="In diesem Installer ist kein Signaturschlüssel hinterlegt."
+        return 1
+    fi
+    ensure_gpgv
+
+    # Prüfsummenliste und Signatur nur einmal pro Lauf laden und prüfen.
+    if [ ! -f "$dir/verified" ]; then
+        rm -rf "$dir"
+        mkdir -p "$dir/gnupg"
+        chmod 700 "$dir/gnupg"
+
+        if ! curl -fsSL --proto '=https' --proto-redir '=https' -o "$dir/SHA256SUMS" \
+                "$SIGNATURE_BASE/SHA256SUMS" 2>>"$LOG" \
+            || ! curl -fsSL --proto '=https' --proto-redir '=https' -o "$dir/SHA256SUMS.asc" \
+                "$SIGNATURE_BASE/SHA256SUMS.asc" 2>>"$LOG"; then
+            VERIFY_ERROR="Die signierte Prüfsummenliste konnte nicht geladen werden."
+            return 1
+        fi
+
+        if ! printf '%s' "$SIGNING_KEY_B64" | base64 -d >"$dir/key.gpg" 2>/dev/null; then
+            VERIFY_ERROR="Der hinterlegte Signaturschlüssel ist beschädigt."
+            return 1
+        fi
+
+        printf -- '--- gpgv ---\n' >>"$LOG"
+        if ! gpgv --homedir "$dir/gnupg" --keyring "$dir/key.gpg" --status-fd 3 \
+                "$dir/SHA256SUMS.asc" "$dir/SHA256SUMS" 3>"$dir/status" >>"$LOG" 2>&1 \
+            || ! grep -Eq "^\[GNUPG:\] VALIDSIG .*\b$SIGNING_KEY_FPR\b" "$dir/status"; then
+            VERIFY_ERROR="Die Signatur der Prüfsummenliste ist ungültig."
+            return 1
+        fi
+        touch "$dir/verified"
+    fi
+
+    name="v$VERSION.patch"
+    expected=$(awk -v f="$name" '$2 == f || $2 == "*" f { print $1; exit }' "$dir/SHA256SUMS")
+    if [ -z "$expected" ]; then
+        VERIFY_ERROR="Für $name gibt es keine signierte Prüfsumme."
+        return 1
+    fi
+    actual=$(sha256sum "$PATCH_FILE" | cut -d' ' -f1)
+    if [ "$actual" != "$expected" ]; then
+        VERIFY_ERROR="Die Prüfsumme von $name stimmt nicht mit der signierten Liste überein."
+        return 1
+    fi
+    printf 'Signatur und Prüfsumme von %s sind gültig (%s).\n' "$name" "$actual" >>"$LOG"
 }
 
 find_patch() {
@@ -328,11 +402,13 @@ find_patch() {
             404)     no_patch_error "Für die Panel-Version ${BLUE}v$VERSION$RED gibt es noch keinen GermanDactyl-Patch." ;;
             000|"")  send_error "Der Patch-Server $PATCH_SERVER ist nicht erreichbar. Prüfe deine Internetverbindung." ;;
             invalid) send_error "Die heruntergeladene Datei ist kein gültiger Patch." ;;
+            unverified) send_error "$VERIFY_ERROR
+  Der Patch wird aus Sicherheitsgründen nicht angewendet. Versuche es später erneut oder melde das Problem." ;;
             *)       send_error "Der Patch konnte nicht geladen werden (HTTP-Status $DOWNLOAD_CODE). Versuche es später erneut." ;;
         esac
     fi
 
-    send_success "Patch für ${BLUE}v$VERSION$GREEN geladen."
+    send_success "Patch für ${BLUE}v$VERSION$GREEN geladen, Signatur und Prüfsumme sind gültig."
 }
 
 # Prüft die Pfade im Patch und merkt sich neu angelegte Dateien.

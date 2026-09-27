@@ -1,0 +1,54 @@
+# .github/workflows/verify-patches.yml
+# Prüft, ob alle Patches in der signierten Prüfsummenliste stehen und die
+# Signatur zum Schlüssel in scripts/install.sh passt. Ohne das würde der
+# Installer nach einem Merge jede Installation ablehnen.
+name: Patches prüfen
+
+on:
+  pull_request:
+    paths:
+      - 'patches/**'
+      - 'scripts/install.sh'
+      - '.github/workflows/verify-patches.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'patches/**'
+      - 'scripts/install.sh'
+      - '.github/workflows/verify-patches.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Signatur und Prüfsummen prüfen
+        run: |
+          set -euo pipefail
+          fpr=$(sed -n 's/^readonly SIGNING_KEY_FPR="\(.*\)"$/\1/p' scripts/install.sh)
+          b64=$(sed -n 's/^readonly SIGNING_KEY_B64="\(.*\)"$/\1/p' scripts/install.sh)
+          if [[ ! $fpr =~ ^[0-9A-F]{40}$ ]] || [[ -z $b64 || $b64 == __* ]]; then
+            echo "::error file=scripts/install.sh::Kein Signaturschlüssel in install.sh hinterlegt."
+            exit 1
+          fi
+
+          work=$(mktemp -d)
+          mkdir -m 700 "$work/gnupg"
+          printf '%s' "$b64" | base64 -d >"$work/key.gpg"
+          gpgv --homedir "$work/gnupg" --keyring "$work/key.gpg" --status-fd 3 \
+            patches/SHA256SUMS.asc patches/SHA256SUMS 3>"$work/status"
+          grep -Eq "^\[GNUPG:\] VALIDSIG .*\b$fpr\b" "$work/status" \
+            || { echo "::error file=patches/SHA256SUMS.asc::Signatur stammt nicht vom Schlüssel $fpr."; exit 1; }
+
+          cd patches
+          sha256sum --strict -c SHA256SUMS
+          for patch in v*.patch; do
+            grep -q "  $patch\$" SHA256SUMS \
+              || { echo "::error file=patches/$patch::$patch fehlt in SHA256SUMS. Signiere mit ./scripts/createPatch.sh --sign"; exit 1; }
+          done
+          echo "Alle Patches sind signiert und unverändert."
