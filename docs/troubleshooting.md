@@ -1,29 +1,50 @@
-Hier findest du alle Lösungen, die wir kennen. Wenn bei dir ein unbekannter Fehler auftritt, kannst du ein ein [Issue](https://github.com/pavl21/GermanDactyl/issues) eröffnen, damit wir weiterhelfen können.
+# Fehlerbehebung
 
-??? error "In diesem Ordner wurde keine pterodactyl-Instanz gefunden. Bitte verwende einen anderen Pfad."
-    Dieser Fehler tritt meistens auf, wenn pterodactyl unter einem anderen Ordner als `/var/www/pterodactyl` installiert
-    wurde. Ist das der Fall, füge ein `-d /dein/installations/ort` hinter den Befehl hinzu. Weiteres dazu 
-    [in der Installationsanleitung](/installation/).   
-    Ist der Ordner richtig angegeben und der Fehler erscheint trotzdem, vergewissere dich, dass die Zugriffsrechte
-    korrekt eingestellt sind und der Nutzer die Datei `/config/app.php` lesen kann.
+Hier findest du alle Lösungen, die wir kennen. Tritt bei dir ein unbekannter Fehler auf, eröffne ein
+[Issue](https://github.com/pavl21/GermanDactyl/issues) und hänge einen Auszug aus `germandactyl.debug.log`
+(im Panel-Ordner) an, damit wir dir helfen können.
 
-??? error "Bitte führe diesen Befehl als Superuser aus."
-    Hast du das `sudo` vergessen? Dieser Fehler tritt nur auf, wenn der Befehl nicht als Superuser (`root`) ausgeführt
-    wird. Überprüfe also, ob du auch wirklich als `root` angemeldet bist oder ob im One-Click-Installer das `sudo`
-    angegeben wurde.
+??? error "In diesem Ordner wurde keine Pterodactyl-Instanz gefunden. Bitte verwende einen anderen Pfad."
+    Dieser Fehler tritt meistens auf, wenn Pterodactyl nicht unter `/var/www/pterodactyl` installiert wurde. Ist das
+    der Fall, hänge `-d /dein/panel/pfad` an den Befehl an. Mehr dazu [in der Installationsanleitung](installation.md).
 
-??? error "_xy_ konnte nicht gepatcht werden. Hat ein Addon diese Datei überschrieben?"
-    Dieser Fehler könnte aufgrund folgenden Problemen auftreten:   
-    1. Die angegebene Datei wurde bereits von GermanDactyl gepatcht und kann daher nicht überschrieben werden.   
-    2. Du hast ein Addon / Theme installiert, welches Pterodactyl so anpasst, dass der Patch nicht weiß, wohin er sich
-       anwenden kann.   
-    Das ist nicht immer schlimm. Passiert das bei 2 - 3 Dateien lassen sich diese immer noch manuell bearbeiten oder
-    gar ignorieren. Solltest du allerdings den Patch noch nicht angewendet haben und trotzdem viele dieser Fehler
-    erhalten, überprüfe, ob ein Addon oder Theme den Patch blockiert oder du die richtige Version von GermanDactyl
-    ausgewählt hast.
-    
-??? error "Das Panel ist nach dem Upgrade/Installation nur noch weiß"
-    Das Problem hängt meist mit dem Theme zusammen, was du davor genutzt hast. Einige Themes oder Addons erstellen neue Dateien,
-    die normalerweise nicht in Pterodactyl dabei sind. Die beste Lösung wäre, das du im Verzeichnis `/var/www/pterodactyl` 
-    den Ordner `ressources` komplett löschst, sichere dir aber am besten vorher die Version als Backup, solltest du noch eigene
-    Änderungen gemacht haben. Führe dann das Upgrade, [wie hier beschrieben](https://germandactyl.de/guides/update/), erneut durch.
+    Stimmt der Pfad und der Fehler erscheint trotzdem, prüfe die Zugriffsrechte: Die Datei `config/app.php` im
+    Panel-Ordner muss lesbar sein.
+
+??? error "Du hast mit diesem Account nicht genügend Rechte, um die Installation zu starten."
+    Hast du das `sudo` vergessen? Der Installer muss als `root` laufen. Prüfe, ob du als `root` angemeldet bist oder
+    ob im Befehl `sudo bash` steht.
+
+??? error "Leider gibt es aktuell noch keinen Patch für diese Version."
+    Für deine Panel-Version gibt es keinen eigenen Patch. Schau in die
+    [Tabelle der unterstützten Versionen](installation.md#unterstutzte-versionen). Bei 1.13.x, 1.14.x oder 1.15.0
+    [aktualisierst du das Panel](guides/update.md) am besten auf 1.15.1.
+
+    Meldet dein Panel die Version `canary`, wurde es per Git installiert. Gib die Version dann mit `-v <version>` an.
+
+??? error "_xy_ konnte nicht gepatcht werden. Hat ein Add-on diese Datei überschrieben?"
+    Dafür gibt es meist zwei Gründe:
+
+    1. Die Datei wurde bereits von GermanDactyl gepatcht.
+    2. Ein Add-on oder Theme hat Pterodactyl so verändert, dass der Patch die passende Stelle nicht findet.
+
+    Bei zwei oder drei Dateien ist das nicht schlimm – du kannst sie manuell anpassen oder ignorieren. Bekommst du
+    viele dieser Fehler, prüfe, ob ein Add-on oder Theme den Patch blockiert und ob die Patch-Version zu deinem Panel
+    passt.
+
+??? error "Der Build ist fehlgeschlagen"
+    Der Installer stellt in diesem Fall automatisch das Backup wieder her – dein Panel bleibt also auf dem alten
+    Stand. Häufige Ursachen:
+
+    - **Zu wenig Arbeitsspeicher:** Der Build braucht mindestens 2 GB RAM. Lege bei Bedarf eine Swap-Datei an.
+    - **Falsche Node-Version:** Prüfe mit `node -v`, ob Node.js 22 oder neuer installiert ist.
+
+    Die genaue Fehlermeldung findest du in `germandactyl.debug.log` im Panel-Ordner. Die Backups liegen unter
+    `/var/backups/germandactyl/`.
+
+??? error "Das Panel ist nach dem Update oder der Installation nur noch weiß"
+    Meist liegt das an einem Theme oder Add-on, das du vorher genutzt hast und das eigene Dateien mitbringt.
+
+    Am saubersten ist es, das offizielle Release-Tarball deiner Panel-Version neu zu entpacken, wie in der
+    [Deinstallation](uninstall.md#manuell-zurucksetzen) beschrieben. Sichere vorher eigene Änderungen. Führe
+    danach GermanDactyl erneut aus.

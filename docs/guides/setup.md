@@ -1,22 +1,22 @@
+# GermanDactyl Setup (Beta)
 
-# GermanDactyl Setup - (Beta)
-
-Wir möchten mehr als eine Übersetzung bieten, und haben uns die Mühe gemacht den Kern einfacher zu gestalten: Die Installation und Verwaltung von Pterodactyl.
-Mithilfe dieses Scriptes kannst du kinderleicht ein Pterodactyl Panel aufsetzen, du benötigst dazu nur einen Linux Server und eine eigene Domain.
+Wir möchten mehr als eine Übersetzung bieten und haben uns die Mühe gemacht, den Kern einfacher zu gestalten: die Installation und Verwaltung von Pterodactyl.
+Mit diesem Skript setzt du kinderleicht ein Pterodactyl Panel auf. Du brauchst dafür nur einen Linux-Server und eine eigene Domain.
 
 !!! info "Voraussetzungen"
-    - Debian oder Ubuntu
-    - Genügend Speicherplatz (ca. 1GB für das Panel und Wings)
-    - Ein frisch aufgesetztes System, wo Port 80 nicht verwendet wird.
+    - Ubuntu 22.04/24.04 oder Debian 11/12/13 (RHEL, Rocky und Alma werden nicht unterstützt)
+    - Genügend Speicherplatz (ca. 1 GB für Panel und Wings)
+    - Ein frisch aufgesetztes System, auf dem Port 80 nicht belegt ist
 
 ## Installation
 
 !!! warning "Beta-Phase"
-    Das Script befindet sich in der Beta-Phase! Es können noch unerwartet Probleme auftreten, die Verwendung unterliegt deiner Verantwortung.
-    Sollte das Script bei dir nicht starten, dann eröffne bitte ein [Issue bei uns](https://github.com/pavl21/GermanDactyl/issues).
+    Das Skript befindet sich in der Beta-Phase! Es können noch unerwartete Probleme auftreten, die Verwendung erfolgt auf eigene Verantwortung.
+    Startet das Skript bei dir nicht, eröffne bitte ein [Issue bei uns](https://github.com/pavl21/GermanDactyl/issues).
 
-Mit diesem Befehl kannst du das Script starten:
-```
+Mit diesem Befehl startest du das Skript:
+
+```shell
 sudo bash -c "$(curl -sSL https://setup.germandactyl.de/)"
 ```
 
@@ -26,34 +26,32 @@ sudo bash -c "$(curl -sSL https://setup.germandactyl.de/)"
 ### Panel-Installation mit simplen Angaben
 ![Bild](https://i.imgur.com/7163oVV.png)
 
-Das erste, was man tun kann, ist die Installation des Panel und Wings. Mit nur einigen Angaben, wie die Domain oder E-Mail Adresse für die SSL-Zertifikate von Let's Encrypt, kann man über eine grafische Übersicht in einer SSH-Sitzung die Installation durchführen.
+Als Erstes kannst du Panel und Wings installieren. Mit nur wenigen Angaben, etwa der Domain und der E-Mail-Adresse für die SSL-Zertifikate von Let's Encrypt, führst du die Installation über eine grafische Oberfläche in einer SSH-Sitzung durch.
 
-### Automatische Account-Erstellung
+### Automatische Kontoerstellung
 ![Bild](https://i.imgur.com/lkv65jd.png)
 
-Der Account wird bei der Installation automatisch angelegt, damit du das nicht tun musst. Du bekommst am Ende eigene zufällig generierte Zugangsdaten.
+Das Konto wird bei der Installation automatisch angelegt, damit du das nicht selbst tun musst. Am Ende bekommst du zufällig generierte Zugangsdaten.
 
 ### Wings ganz leicht integrieren
 ![Bild](https://i.imgur.com/Ca6BrLS.png)
 
-Sobald das Pterodactyl Panel steht, kann mit der Installation von Wings fortgefahren werden. Das kannst du direkt nach danach machen und benötigst nur 2 Angaben (Domain und E-Mail). Zudem wird auch erklärt, wie du Wings als Node im Panel erstellst. Und damit keine Fehler auftreten, prüft das Script mit einigen Tests ob du alles richtig gemacht hast. Wenn nicht, wird dir eine Problemlösung gegeben (nicht bei jedem Fall).
+Sobald das Pterodactyl Panel steht, geht es mit Wings weiter. Das kannst du direkt danach erledigen und brauchst nur zwei Angaben (Domain und E-Mail). Außerdem wird erklärt, wie du Wings als Node im Panel anlegst. Damit keine Fehler auftreten, prüft das Skript mit einigen Tests, ob alles richtig eingerichtet ist. Falls nicht, bekommst du (in den meisten Fällen) einen Lösungsvorschlag.
 
 ### Allgemeine Verwaltung von Pterodactyl
 ![Bild](https://i.imgur.com/uYh4sg4.png)
 
-Nach dem Aufsetzen einiger Server in Pterodactyl oder dem Betrieb im allgemeinen fragt man sich schon, wie man sich die Verwaltung und Wartung leicht machen kann. Dafür haben wir die Pterodactyl Verwaltung/Wartung. Dort kannst du mit Tools einige allgemeine Probleme selbst lösen oder Software bzw. Themes auf Wunsch integrieren.
-
-<br>
+Im laufenden Betrieb möchtest du dir Verwaltung und Wartung sicher leicht machen. Dafür gibt es den Bereich Verwaltung/Wartung: Dort löst du mit einigen Tools häufige Probleme selbst oder installierst auf Wunsch Software und Themes.
 
 !!! info "Info bei fehlerhaften Angaben"
-    Es kann sein, das Angaben fehlen. Diesem Fehler gehen wir gerne nach und korrigieren es, sofern wir davon erfahren.
+    Es kann sein, dass Angaben fehlen oder nicht mehr stimmen. Sag uns gerne Bescheid, dann korrigieren wir das.
 
-# Verweise auf Teile des Scripts
+## Verwendete Projekte
 
-Einige Teile des Scripts stammen von anderen Entwicklern, hier wird dann der Entwickler erwähnt. Hierzu gehören auch die, die im Hintergrund verwendet werden.
+Einige Teile des Skripts stammen von anderen Entwicklern oder nutzen deren Software im Hintergrund:
 
-## Color-Themes
-Die Farbthemen bei den Themes stammen von dem Entwickler  [SigmaProduction](https://github.com/Sigma-Production/PteroFreeStuffinstaller)
+### Farbthemen
+Die Farbthemen stammen von [SigmaProduction](https://github.com/Sigma-Production/PteroFreeStuffinstaller)
 
-## Let's Encrypt
-Damit die SSL Zertifikate zur Verfügung gestellt werden können, wird Certbot verwendet. [Mehr als 100 Sponsoren](https://letsencrypt.org/de/sponsors/), darunter auch Google und Amazon, ermöglichen es, das SSL Zertifikate kostenlos zur Verfügung gestellt werden können. Hierbei gilt zu beachten, das die bereitgestellten Zertifikate 90 Tage gelten, danach müssen sie erneuert werden. Das kannst du aber in der Problembehandlung ganz einfach erneuern lassen. 
+### Let's Encrypt
+Für die SSL-Zertifikate wird Certbot verwendet. [Zahlreiche Sponsoren](https://letsencrypt.org/de/sponsors/) ermöglichen es, dass Let's Encrypt SSL-Zertifikate kostenlos bereitstellt. Die Zertifikate sind 90 Tage gültig und müssen danach erneuert werden – das erledigst du ganz einfach in der Problembehandlung des Skripts.
