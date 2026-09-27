@@ -522,8 +522,18 @@ build_panel() {
     fi
     printf -- '--- yarn run build:production ---\n' >>"$LOG"
     if ! run_logged yarn run build:production; then
-        show_log_tail
-        send_error "Der Build des Panels ist fehlgeschlagen."
+        # Ältere Panel-Versionen (Webpack 4, z. B. v1.11.x) brauchen unter Node >= 17 den OpenSSL-Legacy-Provider.
+        if grep -q "ERR_OSSL_EVP_UNSUPPORTED" "$LOG"; then
+            send_warn "Build mit OpenSSL-Legacy-Modus wird erneut versucht (ältere Panel-Version) …"
+            printf -- '--- yarn run build:production (NODE_OPTIONS=--openssl-legacy-provider) ---\n' >>"$LOG"
+            if ! NODE_OPTIONS=--openssl-legacy-provider run_logged yarn run build:production; then
+                show_log_tail
+                send_error "Der Build des Panels ist fehlgeschlagen."
+            fi
+        else
+            show_log_tail
+            send_error "Der Build des Panels ist fehlgeschlagen."
+        fi
     fi
     send_success "Das Panel wurde gebaut."
 }
