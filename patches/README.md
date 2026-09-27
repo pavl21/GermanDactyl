@@ -16,7 +16,8 @@ Neue Patches erstellst du mit `./scripts/startPatching.sh [version]` und `./scri
 
 ## Signatur
 
-`SHA256SUMS` enthält die SHA-256-Prüfsummen aller Patches, `SHA256SUMS.asc` die GPG-Signatur dieser Liste.
+`SHA256SUMS` enthält die SHA-256-Prüfsummen aller Patches, `SHA256SUMS.asc` die GPG-Signatur dieser Liste,
+`germandactyl-signing-key.asc` den öffentlichen Schlüssel (Fingerabdruck `2CB69766DC1E05E8D805D4C0DF5A303D401576B8`).
 `install.sh` prüft beides vor jeder Installation. Nach jeder Änderung an einem Patch neu signieren:
 `./scripts/createPatch.sh --sign`.
 

@@ -31,8 +31,8 @@ readonly SIGNATURE_BASE=https://raw.githubusercontent.com/pavl21/GermanDactyl/ma
 # Öffentlicher Schlüssel, mit dem patches/SHA256SUMS signiert wird.
 # SIGNING_KEY_FPR: Fingerabdruck (40 Hex-Zeichen, ohne Leerzeichen)
 # SIGNING_KEY_B64: gpg --export <Fingerabdruck> | base64 -w0
-readonly SIGNING_KEY_FPR="__GERMANDACTYL_SIGNING_KEY_FPR__"
-readonly SIGNING_KEY_B64="__GERMANDACTYL_SIGNING_KEY_B64__"
+readonly SIGNING_KEY_FPR="2CB69766DC1E05E8D805D4C0DF5A303D401576B8"
+readonly SIGNING_KEY_B64="mDMEarlszRYJKwYBBAHaRw8BAQdA1wvFzK9PQQL8O8H7ZEZVUyNka2ss34DjIkIBxWpClgy0NEdlcm1hbkRhY3R5bCBQYXRjaCBTaWduaW5nIChodHRwczovL2dlcm1hbmRhY3R5bC5kZSmIkwQTFgoAOxYhBCy2l2bcHgXo2AXUwN9aMD1AFXa4BQJquWzNAhsDBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEN9aMD1AFXa41lABAKJvPQhh6P4CKW54qnN6pCKuYa+ZbY6/rSxUnXToMNxrAQDyL23730jn08Pu6UaSTZQZ/wnXJznaQFuudwFuMpORBg=="
 readonly PANEL_RELEASES=https://github.com/pterodactyl/panel/releases/download
 readonly BACKUP_ROOT=/var/backups/germandactyl
 readonly MIN_NODE_MAJOR=22

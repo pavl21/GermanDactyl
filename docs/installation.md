@@ -85,9 +85,16 @@ Der Installer wendet nur Patches an, deren SHA-256-Prüfsumme in der signierten 
 prüft er mit `gpgv` gegen den im Skript fest hinterlegten Schlüssel. Ist die Signatur ungültig oder wurde der Patch
 verändert, bricht die Installation ab, ohne etwas am Panel zu ändern.
 
-Manuell prüfen kannst du einen Patch so:
+Fingerabdruck des Signaturschlüssels:
+
+```
+2CB6 9766 DC1E 05E8 D805  D4C0 DF5A 303D 4015 76B8
+```
+
+Manuell prüfen kannst du einen Patch so (im Ordner `patches/`):
 
 ```bash
+gpg --import germandactyl-signing-key.asc
 gpg --verify SHA256SUMS.asc SHA256SUMS && sha256sum --ignore-missing -c SHA256SUMS
 ```
 
