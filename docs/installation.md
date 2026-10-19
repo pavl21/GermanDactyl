@@ -63,7 +63,7 @@ Füge den folgenden Befehl in die Konsole deines Servers ein. GermanDactyl insta
 
 ### Was der Installer macht
 
-1. **Patch laden und Signatur prüfen:** Der Installer prüft Root-Rechte, Panel-Pfad und Panel-Version, lädt den passenden Patch und prüft Signatur und Prüfsumme.
+1. **Patch laden und Prüfsumme prüfen:** Der Installer prüft Root-Rechte, Panel-Pfad und Panel-Version, lädt den passenden Patch und vergleicht seine Prüfsumme.
 2. **Bereits installiert?** Ist der Patch schon angewendet, endet der Installer hier ohne Änderungen. Sonst folgen – nach einer kurzen Wartezeit (überspringen mit `-y`) – die weiteren Schritte.
 3. **Abhängigkeiten:** PHP, Node.js (die Mindestversion liest der Installer aus der `package.json` des Panels, ab 1.12 ist das Node.js ≥ 22; fehlt sie, wird sie über NodeSource installiert) und Yarn bzw. npm. Fehlende Pakete installiert er unter Debian/Ubuntu selbst.
 4. **Backup** nach `/var/backups/germandactyl/` (`panel-<version>-install-<zeit>.tar.gz`).
@@ -81,24 +81,16 @@ Schlägt ein Schritt nach dem Anwenden des Patches fehl (z. B. der Build), wird 
     Unter **Admin → Benutzer** kannst du die Sprache einzelner Benutzer wieder auf Englisch stellen. Die fest
     eingebauten Oberflächentexte bleiben jedoch deutsch.
 
-### Signierte Patches
+### Geprüfte Patches
 
-Der Installer wendet nur Patches an, deren SHA-256-Prüfsumme in der signierten Liste
-[`patches/SHA256SUMS`](https://github.com/pavl21/GermanDactyl/blob/main/patches/SHA256SUMS) steht. Die Signatur
-prüft er mit `gpgv` gegen den im Skript fest hinterlegten Schlüssel. Ist die Signatur ungültig oder wurde der Patch
-verändert, bricht die Installation ab, ohne etwas am Panel zu ändern.
-
-Fingerabdruck des Signaturschlüssels:
-
-```
-2CB6 9766 DC1E 05E8 D805  D4C0 DF5A 303D 4015 76B8
-```
+Der Installer wendet nur Patches an, deren SHA-256-Prüfsumme in der Liste
+[`patches/SHA256SUMS`](https://github.com/pavl21/GermanDactyl/blob/main/patches/SHA256SUMS) steht. Stimmt die
+Prüfsumme nicht oder fehlt der Eintrag, bricht die Installation ab, ohne etwas am Panel zu ändern.
 
 Manuell prüfen kannst du einen Patch so (im Ordner `patches/`):
 
 ```bash
-gpg --import germandactyl-signing-key.asc
-gpg --verify SHA256SUMS.asc SHA256SUMS && sha256sum --ignore-missing -c SHA256SUMS
+sha256sum --ignore-missing -c SHA256SUMS
 ```
 
 ## Patches manuell anwenden

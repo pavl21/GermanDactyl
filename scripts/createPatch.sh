@@ -4,20 +4,12 @@
 # und verlässt den Patch-Modus (zurück auf main, Branch "patches" und Tag
 # "base" werden gelöscht).
 #
-# Verwendung: ./scripts/createPatch.sh [--no-sign] [version]
-#             ./scripts/createPatch.sh --sign
+# Verwendung: ./scripts/createPatch.sh [version]
 #   version    Panel-Version, z. B. v1.15.1 oder 1.15.1
 #              (Standard: die Version, mit der startPatching.sh gestartet wurde;
 #              sonst das neueste Release laut GitHub)
-#   --sign     Nur patches/SHA256SUMS neu erzeugen und signieren
-#   --no-sign  Patch erstellen und patches/SHA256SUMS erneuern, aber nicht
-#              signieren (für Beiträge ohne Projektschlüssel; der Maintainer
-#              signiert später mit --sign)
 #
-# Signiert wird mit GPG. Den Schlüssel wählst du über die Umgebungsvariable
-# GERMANDACTYL_SIGNING_KEY (Fingerabdruck); sonst nimmt GPG den Standardschlüssel.
-# Die Signatur muss vom Projektschlüssel stammen, dessen Fingerabdruck in
-# scripts/install.sh steht – sonst lehnt der Installer die Patches ab.
+# Danach wird patches/SHA256SUMS mit den Prüfsummen aller Patches erneuert.
 
 set -euo pipefail
 
@@ -46,86 +38,38 @@ latest_version() {
     printf '%s\n' "$tag"
 }
 
-# Erzeugt patches/SHA256SUMS für alle Patches und signiert die Liste
-# (patches/SHA256SUMS.asc). install.sh wendet nur Patches an, deren Prüfsumme
-# in dieser signierten Liste steht.
-# Beides entsteht zuerst in einem Temp-Ordner und wird erst nach erfolgreicher
-# Signatur nach patches/ verschoben – scheitert etwas, bleibt patches/ unverändert.
-# Mit sign=0 (--no-sign) wird nur SHA256SUMS erneuert; die alte Signatur passt
-# dann nicht mehr dazu.
-sign_patches() {
-    local sign=$1 patches=() key_opts=() expected_fpr status
-    local sums="$workdir/SHA256SUMS" sig="$workdir/SHA256SUMS.asc"
+# Erzeugt patches/SHA256SUMS für alle Patches. install.sh wendet nur Patches an,
+# deren Prüfsumme in dieser Liste steht.
+# Die Liste entsteht zuerst in einem Temp-Ordner und wird erst nach Erfolg nach
+# patches/ verschoben – scheitert etwas, bleibt patches/ unverändert.
+update_checksums() {
+    local patches=()
+    local sums="$workdir/SHA256SUMS"
 
     mapfile -t patches < <(find patches -maxdepth 1 -name 'v*.patch' -printf '%f\n' | sort -V)
     [ "${#patches[@]}" -gt 0 ] || fail "Im Ordner patches/ liegen keine Patches."
 
     (cd patches && sha256sum -- "${patches[@]}") >"$sums"
-
-    if [ "$sign" = 0 ]; then
-        mv "$sums" patches/SHA256SUMS
-        warn "Die Liste patches/SHA256SUMS wurde ohne Signatur erneuert. patches/SHA256SUMS.asc passt jetzt nicht mehr dazu,
-  und install.sh lehnt die Patches ab, bis der Maintainer sie signiert hat: ./scripts/createPatch.sh --sign"
-        return
-    fi
-
-    command -v gpg >/dev/null 2>&1 || fail "gpg wurde nicht gefunden. Installiere GnuPG oder verwende --no-sign.
-  Die Prüfsummenliste patches/SHA256SUMS wurde nicht verändert."
-
-    if [ -n "${GERMANDACTYL_SIGNING_KEY:-}" ]; then
-        key_opts=(--local-user "$GERMANDACTYL_SIGNING_KEY")
-    else
-        warn "GERMANDACTYL_SIGNING_KEY ist nicht gesetzt. GPG verwendet den Standardschlüssel."
-    fi
-    if ! gpg --batch --yes --armor --detach-sign "${key_opts[@]}" --output "$sig" "$sums"; then
-        fail "Das Signieren ist fehlgeschlagen. Ohne gültige Signatur lehnt install.sh die Patches ab!
-  Die Prüfsummenliste patches/SHA256SUMS wurde nicht verändert.
-  Signiere mit dem Projektschlüssel: GERMANDACTYL_SIGNING_KEY=<Fingerabdruck> ./scripts/createPatch.sh --sign
-  Hast du keinen Schlüssel, erstelle Patches mit --no-sign."
-    fi
-
-    status=$(gpg --batch --status-fd 1 --verify "$sig" "$sums" 2>/dev/null) \
-        || fail "Die gerade erstellte Signatur lässt sich nicht prüfen."
-    expected_fpr=$(sed -n 's/^readonly SIGNING_KEY_FPR="\([0-9A-F]*\)".*/\1/p' scripts/install.sh)
-    if [ -n "$expected_fpr" ] && ! grep -Eq "^\[GNUPG:\] VALIDSIG .*\b$expected_fpr\b" <<<"$status"; then
-        fail "Die Signatur stammt nicht vom Projektschlüssel $expected_fpr (siehe scripts/install.sh).
-  Die Prüfsummenliste patches/SHA256SUMS wurde nicht verändert."
-    fi
-
-    mv "$sig" patches/SHA256SUMS.asc
     mv "$sums" patches/SHA256SUMS
-    success "patches/SHA256SUMS für ${#patches[@]} Patches erstellt und signiert."
+    success "patches/SHA256SUMS für ${#patches[@]} Patches erstellt."
 }
 
 # --- Optionen -----------------------------------------------------------------
 
-sign_only=0
-do_sign=1
 version=""
 for arg in "$@"; do
     case "$arg" in
-        --sign)    sign_only=1 ;;
-        --no-sign) do_sign=0 ;;
         -h|--help) sed -n '2,/^$/p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         -*)        fail "Unbekannte Option: $arg" ;;
         *)         [ -z "$version" ] || fail "Es darf nur eine Version angegeben werden."
                    version=$arg ;;
     esac
 done
-[ "$sign_only" = 0 ] || [ "$do_sign" = 1 ] || fail "--sign und --no-sign schließen sich aus."
-[ "$sign_only" = 0 ] || [ -z "$version" ] || fail "--sign erstellt keinen Patch und braucht keine Version."
 
 cd "$(git rev-parse --show-toplevel)"
 
 workdir=$(mktemp -d)
 trap 'rm -rf "$workdir"' EXIT
-
-if [ "$sign_only" = 1 ]; then
-    sign_patches 1
-    echo ""
-    echo "Committe beides: git add patches/SHA256SUMS patches/SHA256SUMS.asc && git commit"
-    exit 0
-fi
 
 # --- Sicherheitsprüfungen ---------------------------------------------------
 
@@ -187,7 +131,7 @@ git tag -d base >/dev/null
 git branch -q -D patches
 
 success "Patch $patch_file erstellt ($files Dateien). Du bist wieder auf main."
-sign_patches "$do_sign"
+update_checksums
 echo ""
 echo "Nächste Schritte:"
 echo "  1. Trage $version in die Versionstabelle ein (README.md, docs/installation.md, patches/README.md)"
@@ -195,9 +139,4 @@ echo "     und passe die Zeile \"Aktuelle Panel-Version\" in README.md und docs/
 echo "  2. Ergänze die Version in KNOWN_PATCHES in scripts/install.sh."
 echo "  3. Prüfe, dass der Patch-Server patch.germandactyl.de die neue Version ausliefert"
 echo "     (curl -fsSL https://patch.germandactyl.de/${version#v} | head -n 1)."
-if [ "$do_sign" = 1 ]; then
-    echo "  4. Committe alles: git add $patch_file patches/SHA256SUMS patches/SHA256SUMS.asc patches/README.md README.md docs scripts/install.sh && git commit"
-else
-    echo "  4. Committe alles: git add $patch_file patches/SHA256SUMS patches/README.md README.md docs scripts/install.sh && git commit"
-    echo "  5. Der Maintainer signiert danach mit ./scripts/createPatch.sh --sign (bis dahin lehnt install.sh den Patch ab)."
-fi
+echo "  4. Committe alles: git add $patch_file patches/SHA256SUMS patches/README.md README.md docs scripts/install.sh && git commit"

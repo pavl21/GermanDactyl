@@ -242,8 +242,7 @@ Die Reihenfolge ist wichtig: `--fix` funktioniert nur direkt nach `--text`.
 - **Login-Hinweis (MOTD):** Mit der SSH-Loginseite siehst du nach dem Anmelden, ob das letzte Backup oder Update fehlgeschlagen ist.
 - **Logs:** Jede Installation und Aktion wird unter `/var/log/germandactyl-setup/` protokolliert, auch die der automatischen Backups und Updates.
 - **Einstellungen:** Das Skript speichert seinen Zustand in `/etc/germandactyl/setup.conf`. Die Datei ist nur für root lesbar.
-- **Signierte Skripte:** Alle nachgeladenen Dateien werden gegen eine signierte Prüfsummenliste geprüft, sobald der Schlüssel dafür veröffentlicht ist. Ändert jemand Dateien im Repository, startet das Skript nicht.
-- **Signierte Patches:** Die deutsche Übersetzung wird nur angewendet, wenn die Signatur ihrer Prüfsummenliste und die Prüfsumme der Patch-Datei stimmen. Eine Option zum Überspringen gibt es bewusst nicht.
+- **Geprüfte Patches:** Die deutsche Übersetzung wird nur angewendet, wenn die Prüfsumme der Patch-Datei zur Liste `patches/SHA256SUMS` passt. Eine Option zum Überspringen gibt es bewusst nicht.
 - **Passwörter:** Zugangsdaten tauchen nie in der Prozessliste auf, und das Support-Paket entfernt Passwörter, Schlüssel und Tokens.
 
 ## Fehler melden
