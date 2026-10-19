@@ -10,4 +10,4 @@ Aktuell unterstützte Panel-Version: **v1.15.1**.
 
 ## Kann ich hierüber auch Pterodactyl installieren?
 
-Ja, mit unserem Tool GermanDactyl Setup! Mit diesem Skript richtest du über eine grafische Oberfläche in einer SSH-Sitzung ganz leicht dein Pterodactyl Panel und Wings ein. Mehr dazu findest du [in unserem Beitrag](guides/setup.md).
+Ja, mit unserem Tool GermanDactyl Setup! Mit diesem Skript richtest du über eine Textoberfläche (TUI) in einer SSH-Sitzung ganz leicht dein Pterodactyl Panel und Wings ein und verwaltest sie danach auch. Mehr dazu findest du [in unserer Übersicht](guides/setup.md).

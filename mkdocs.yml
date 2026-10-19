@@ -54,7 +54,7 @@ nav:
   - Start: index.md
   - Installation: installation.md
   - Deinstallation: uninstall.md
-  - GermanDactyl Setup: guides/setup.md
+  - GermanDactyl Setup (TUI): guides/setup.md
   - Anleitungen:
       - Update ausführen: guides/update.md
       - Übersetzungen einreichen: guides/contribute.md
