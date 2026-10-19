@@ -63,3 +63,4 @@ GERMANDACTYL_SIGNING_KEY=<Fingerabdruck> ./scripts/createPatch.sh --sign
 Wer keinen Schlüssel hat (z. B. bei einem Beitrag), nutzt `--no-sign`: Dann wird nur `SHA256SUMS` erneuert, die alte Signatur passt nicht mehr dazu, und der Maintainer signiert später mit `--sign`.
 
 Der Workflow „Patches prüfen“ verhindert, dass unsignierte oder veränderte Patches nach `main` gelangen – der Installer würde sie sonst ablehnen.
+Zusätzlich wendet er jeden Patch per `git apply --check` auf das passende Upstream-Release (`pterodactyl/panel`, Tag `v<version>`) an und prüft die geänderten PHP-Dateien mit `php -l`. Ein Patch, der nicht mehr zur Panel-Version passt, fällt so schon im Pull Request auf.
