@@ -14,10 +14,8 @@ Mit `-v <version>` kannst du im Installer einen anderen Patch erzwingen. Das ges
 
 Neue Patches erstellst du mit `./scripts/startPatching.sh [version]` und `./scripts/createPatch.sh [version]`. Die Anleitung findest du unter [Übersetzungen einreichen](https://germandactyl.de/guides/contribute/).
 
-## Signatur
+## Prüfsummen
 
-`SHA256SUMS` enthält die SHA-256-Prüfsummen aller Patches, `SHA256SUMS.asc` die GPG-Signatur dieser Liste,
-`germandactyl-signing-key.asc` den öffentlichen Schlüssel (Fingerabdruck `2CB69766DC1E05E8D805D4C0DF5A303D401576B8`).
-`install.sh` prüft beides vor jeder Installation. Nach jeder Änderung an einem Patch neu signieren:
-`./scripts/createPatch.sh --sign`.
-
+`SHA256SUMS` enthält die SHA-256-Prüfsummen aller Patches. `install.sh` vergleicht die Prüfsumme des geladenen Patches
+vor jeder Installation mit dieser Liste. Nach jeder Änderung an einem Patch erneuerst du sie mit
+`./scripts/createPatch.sh`.

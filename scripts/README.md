@@ -26,7 +26,7 @@ Voraussetzungen: root-Rechte, PHP 8.2/8.3, etwa 2 GB RAM (inkl. Swap) für den B
 
 Das Skript
 
-- lädt den passenden Patch und prüft seine Signatur: Die SHA-256-Prüfsumme muss in der signierten Liste `patches/SHA256SUMS` stehen (geprüft mit `gpgv` gegen den im Skript hinterlegten Schlüssel). Stimmt etwas nicht, bricht das Skript ohne Änderungen ab.
+- lädt den passenden Patch und prüft seine Prüfsumme: Die SHA-256-Prüfsumme muss in der Liste `patches/SHA256SUMS` stehen. Stimmt etwas nicht, bricht das Skript ohne Änderungen ab.
 - prüft, ob der Patch schon angewendet ist (`git apply --reverse --check`). Ist er installiert, bricht es ohne Änderungen ab – noch vor der Wartezeit und vor dem Installieren von Abhängigkeiten.
 - prüft den Patch mit `git apply --check`.
 - sichert `app`, `resources`, `public`, `database`, `routes` und `config` nach `/var/backups/germandactyl/` (`panel-<version>-install-<zeit>.tar.gz`, bei der Deinstallation `-uninstall-`).
@@ -43,24 +43,18 @@ Schlägt der Build fehl, spielt das Skript das Backup automatisch zurück. Alle 
 ```bash
 ./scripts/startPatching.sh [version]   # z. B. v1.15.1, Standard: neuestes Release
 # Übersetzungen in resources/, app/ usw. anpassen, .rej-Dateien einarbeiten und löschen
-./scripts/createPatch.sh [--no-sign] [version]   # Standard: Version aus startPatching.sh
+./scripts/createPatch.sh [version]   # Standard: Version aus startPatching.sh
 ```
 
-Die Skripte laufen unter Linux und brauchen bash ≥ 4.4, GNU coreutils/find, git und gpg (gpg nur zum Signieren).
+Die Skripte laufen unter Linux und brauchen bash ≥ 4.4, GNU coreutils/find und git.
 
 `startPatching.sh` bricht ab, wenn du nicht auf `main` bist, dein Arbeitsverzeichnis nicht sauber ist oder der Branch `patches` bzw. der Tag `base` noch von einem früheren Lauf existiert. Anschließend wendet es den neuesten vorhandenen Patch an, der nicht neuer als die Zielversion ist.
 
 `createPatch.sh` schreibt `patches/v<version>.patch` (z. B. `patches/v1.15.1.patch`) als reinen `git diff` mit festen Optionen (derselbe Stand ergibt immer denselben Patch), wechselt zurück auf `main` und räumt den Patch-Modus auf. Am Ende zeigt es eine Checkliste: Die Version gehört in die Versionstabellen (`README.md`, `docs/installation.md`, `patches/README.md`), in die Zeile „Aktuelle Panel-Version“ (`README.md`, `docs/index.md`), in `KNOWN_PATCHES` in `install.sh`, und der Patch-Server `patch.germandactyl.de` muss die Version ausliefern.
 
-## Patches signieren
+## Prüfsummen
 
-`createPatch.sh` erzeugt nach jedem neuen Patch `patches/SHA256SUMS` und signiert die Liste mit GPG (`patches/SHA256SUMS.asc`). Beides entsteht zuerst in einem Temp-Ordner und landet erst nach erfolgreicher Signatur in `patches/`; die Signatur muss vom Projektschlüssel aus `install.sh` stammen. Nur signieren (z. B. nach einer Korrektur an einem Patch):
+`createPatch.sh` erzeugt nach jedem neuen Patch `patches/SHA256SUMS` mit den SHA-256-Prüfsummen aller Patches. Die Liste entsteht zuerst in einem Temp-Ordner und landet erst nach Erfolg in `patches/`.
 
-```bash
-GERMANDACTYL_SIGNING_KEY=<Fingerabdruck> ./scripts/createPatch.sh --sign
-```
-
-Wer keinen Schlüssel hat (z. B. bei einem Beitrag), nutzt `--no-sign`: Dann wird nur `SHA256SUMS` erneuert, die alte Signatur passt nicht mehr dazu, und der Maintainer signiert später mit `--sign`.
-
-Der Workflow „Patches prüfen“ verhindert, dass unsignierte oder veränderte Patches nach `main` gelangen – der Installer würde sie sonst ablehnen.
+Der Workflow „Patches prüfen“ verhindert, dass veränderte Patches ohne passende Prüfsumme nach `main` gelangen – der Installer würde sie sonst ablehnen.
 Zusätzlich wendet er jeden Patch per `git apply --check` auf das passende Upstream-Release (`pterodactyl/panel`, Tag `v<version>`) an und prüft die geänderten PHP-Dateien mit `php -l`. Ein Patch, der nicht mehr zur Panel-Version passt, fällt so schon im Pull Request auf.

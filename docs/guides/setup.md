@@ -27,7 +27,7 @@ Läuft auf dem Server schon Pterodactyl, öffnet sich stattdessen direkt die [Ve
 
 ### Was beim ersten Start passiert
 
-1. **Grundpakete:** Fehlende Hilfsprogramme (u. a. `whiptail`, `curl`, `dig`) werden installiert.
+1. **Grundpakete:** Fehlende Hilfsprogramme (u. a. `whiptail`, `curl`, `dig`) werden installiert. Du siehst dabei eine kleine Schrittliste mit Häkchen.
 2. **Willkommensfenster:** Du bestätigst, dass Pakete installiert werden dürfen, du die Nutzungsbedingungen von Let's Encrypt akzeptierst und die Domain dir gehört.
 3. **Vorprüfungen:** Das Skript prüft die IPv4-Verbindung, das Betriebssystem und die CPU-Architektur (amd64 und arm64), die Systemzeit (wird bei Bedarf per NTP synchronisiert), den freien Speicherplatz, ob der Server nur eine private IP hat (Heimnetz/NAT) und ob Port 80/443 frei sind. Läuft dort Apache, bietet es an, ihn zu deaktivieren.
 4. **Installationsmenü:** Hier wählst du, was installiert wird.
@@ -40,6 +40,9 @@ Läuft auf dem Server schon Pterodactyl, öffnet sich stattdessen direkt die [Ve
 | Pelican Panel + Wings (Beta) | Pelican, der Nachfolger von Pterodactyl |
 | Nur Pelican-Wings | Pelican-Panel auf einem anderen Server |
 
+!!! tip "Express-Modus"
+    Bei **Panel + Wings** kannst du den Express-Modus wählen: Du gibst nur die Domain ein, alles andere bekommt sichere Standardwerte (Zertifikat ohne E-Mail-Adresse, Benutzer `admin`, Firewall, fail2ban, Sicherheitsupdates, tägliche Backups, Swap und Node-Ressourcen automatisch). Die Zusammenfassung siehst du trotzdem vor dem Start.
+
 !!! note "Pelican"
     Pelican ist noch eine Beta-Version. Die Verwaltungsfunktionen (Backups, Blueprint, phpMyAdmin usw.) sind nur für Pterodactyl vorgesehen.
 
@@ -51,7 +54,7 @@ Für **Panel + Wings** und **Nur Panel** fragt dich das Skript der Reihe nach:
 | --- | --- |
 | Domain des Panels | Der A-Eintrag muss schon auf den Server zeigen, das wird geprüft |
 | SSL-Verfahren | Wird nur bei einer Domain hinter dem Cloudflare-Proxy gefragt: Proxy ausschalten (Webroot) oder Cloudflare-API-Token (DNS-01) |
-| E-Mail-Adresse | Für das Let's-Encrypt-Zertifikat und dein Administrator-Konto |
+| E-Mail-Adresse | Optional. Ohne Angabe wird das Zertifikat ohne Kontakt-Adresse ausgestellt und das Administrator-Konto heißt `admin@<deine-domain>` |
 | Benutzername | Für das Administrator-Konto (das Passwort wird zufällig erzeugt) |
 | Telemetrie | Ob das Panel anonyme Nutzungsdaten an die Pterodactyl-Entwickler senden darf |
 | Panel-Version | Nur, wenn es für die neueste Version noch keine Übersetzung gibt: neueste Version auf Englisch oder neueste übersetzte Version |
@@ -60,18 +63,20 @@ Für **Panel + Wings** und **Nur Panel** fragt dich das Skript der Reihe nach:
 | Absicherung | Firewall, fail2ban, automatische Sicherheitsupdates, tägliche Backups (alles standardmäßig an) |
 | Blueprint | Optional: das Framework für Erweiterungen und Themes |
 
+Swap-Speicher und die Ressourcen der Wings-Node (Arbeitsspeicher und Festplatte mit Reserve) werden automatisch anhand deines Servers gesetzt, du musst nichts eintragen.
+
 Danach siehst du eine **Zusammenfassung** aller Angaben. Erst wenn du bestätigst, beginnt die Installation. Sie dauert je nach Server 5 bis 20 Minuten. Bricht die SSH-Verbindung ab, wird sie unterbrochen. Starte das Skript bei einer instabilen Verbindung daher in `tmux` oder `screen`. Bricht ein späterer Schritt ab, setzt der nächste Start die Einrichtung mit deinen Angaben fort, statt neu zu installieren.
 
 ### Zugangsdaten am Ende
 
-Am Ende erscheinen die Zugangsdaten für das Panel (Adresse, Benutzername, E-Mail, Passwort) und, falls du Backups aktiviert hast, das Passwort des Backup-Archivs.
+Am Ende erscheinen die Zugangsdaten für das Panel (Adresse, Benutzername, E-Mail, Passwort) und, falls du Backups aktiviert hast, das Passwort des Backup-Archivs. Beides kannst du zusätzlich als Textdatei über einen **Download-Link** deiner Panel-Domain herunterladen. Der Link ist nur so lange gültig, wie der Dialog offen ist, höchstens 90 Sekunden, danach wird die Datei gelöscht.
 
 !!! danger "Nur einmal sichtbar"
     Die Zugangsdaten werden **nur ein einziges Mal** angezeigt. Speichere sie sofort in deinem Passwortmanager. Auf Wunsch legt das Skript sie zusätzlich in `/root/germandactyl-zugangsdaten.txt` ab (nur für root lesbar). Lösche die Datei, sobald du die Daten sicher abgelegt hast.
 
 ## Die Verwaltung
 
-Nach der Installation startest du die Verwaltung jederzeit mit `germandactyl`, kurz `gmd` (zusätzlich `gd`). Die Kurzformen werden nur angelegt, wenn der Befehl auf dem Server noch frei ist. `germandactyl` funktioniert immer. Der Befehl lädt jedes Mal die aktuelle Version des Skripts.
+Nach der Installation startest du die Verwaltung jederzeit mit `germandactyl`, kurz `gmd` (zusätzlich `gd`). Die Kurzformen werden nur angelegt, wenn der Befehl auf dem Server noch frei ist. `germandactyl` funktioniert immer. Der Befehl startet sofort aus einer lokalen Kopie unter `/usr/local/lib/germandactyl` und prüft im Hintergrund, ob es eine neuere Version gibt. Auf Wunsch öffnet sich die Verwaltung automatisch nach jedem SSH-Login als root (Server & Sicherheit → Verwaltung nach SSH-Login).
 
 ### Die Statuszeile
 
@@ -93,13 +98,13 @@ Fehlgeschlagene oder übersprungene Updates erscheinen als zusätzliche Zeile. F
 
 | Menüpunkt | Was passiert |
 | --- | --- |
-| Analyse starten | Prüft System, Updates, nginx, SSL-Zertifikate (auch die tatsächlich ausgelieferten), Dienste, Panel, Wings, DNS und Backups. Optional misst sie die Internetgeschwindigkeit. Behebbare Probleme kannst du danach automatisch beheben lassen. |
+| Analyse starten | Prüft System, Updates, nginx, SSL-Zertifikate (auch die tatsächlich ausgelieferten), Dienste, Panel, Wings, DNS, Backups und die Firewall-Freigaben des Database-Hosts. Optional misst sie die Internetgeschwindigkeit. Behebbare Probleme kannst du danach automatisch beheben lassen. |
 | Ich habe mich ausgesperrt | Legt einen temporären Administrator an, damit du dich anmelden und dein Passwort ändern kannst. Löschen musst du das Konto danach selbst. |
 | Das Panel ist fehlerhaft (reparieren) | Spielt die Panel-Dateien neu auf. Deine Daten bleiben erhalten, vorher gibt es automatisch eine Sicherung. |
 | Das Panel ist nicht erreichbar | Prüft die Domain und stellt die Webserver-Konfiguration (nginx) wieder her. |
 | SSL-Zertifikate prüfen/erneuern | Siehe unten. |
 | Logs anzeigen | Zeigt die letzten 300 Zeilen von Panel, Wings, nginx, Queue-Dienst, automatischen Backups oder der letzten Aktion des Skripts. |
-| Support-Paket erstellen | Packt Versionen, Dienststatus, Analyse, Konfiguration und Logs in ein Archiv unter `/root`. Passwörter, Schlüssel und Tokens werden entfernt, hochgeladen wird nichts. |
+| Support-Paket erstellen | Packt Versionen, Dienststatus, Analyse, Konfiguration und Logs in ein Archiv und eine Textdatei unter `/root`. Passwörter, Schlüssel, Tokens und E-Mail-Adressen werden entfernt. Optional lädst du die Textdatei nach einer Vorschau zu [mclo.gs](https://mclo.gs) hoch und bekommst einen Link für den Support. Achtung: Der Link ist öffentlich abrufbar. |
 
 Unter **SSL-Zertifikate** findest du:
 
@@ -115,7 +120,7 @@ Unter **SSL-Zertifikate** findest du:
 
 | Menüpunkt | Was passiert |
 | --- | --- |
-| Panel aktualisieren | Prüft zuerst, ob du Dateien des Panels selbst verändert hast (Themes, Addons). Du kannst sie sichern und danach wieder anwenden lassen. Vor dem Update entsteht automatisch eine Sicherung aus Dateien und Datenbank, schlägt das Update fehl, wird sie zurückgespielt. Ein Wechsel auf eine ältere Version ist nicht möglich. |
+| Panel aktualisieren | Prüft zuerst, ob du Dateien des Panels selbst verändert hast (Themes, Addons). Du kannst sie sichern und danach wieder anwenden lassen. Dateien von Blueprint zählen dabei nicht als eigene Änderung. Ist Blueprint installiert, wird die Übersetzung mit Unschärfe nachgezogen. Vor dem Update entsteht automatisch eine Sicherung aus Dateien und Datenbank, schlägt das Update fehl, wird sie zurückgespielt. Ein Wechsel auf eine ältere Version ist nicht möglich. |
 | Wings aktualisieren | Installiert die neueste passende Wings-Version. |
 | Blueprint aktualisieren | Wendet Blueprint nach einem Update erneut an (nur wenn Blueprint installiert ist). |
 | System-Pakete aktualisieren (apt) | Installiert Paket-Updates. Werden Docker-Pakete aktualisiert, starten alle Gameserver kurz neu. |
@@ -145,7 +150,8 @@ Jedes manuelle Backup wird nach dem Erstellen auf Vollständigkeit geprüft und 
     | Ziel | Geeignet für |
     | --- | --- |
     | Lokaler Pfad | Ordner oder eingehängtes Laufwerk, z. B. `/mnt/backup` |
-    | SFTP | Storage Box oder ein anderer Server per SSH (der Schlüssel muss ohne Passphrase in `/root/.ssh` liegen) |
+    | Hetzner Storage Box | Wird automatisch eingerichtet: Benutzer und Ordner eingeben, der SSH-Schlüssel wird erzeugt und hinterlegt (Port 23) |
+    | SFTP | Ein anderer Server per SSH (der Schlüssel muss ohne Passphrase in `/root/.ssh` liegen) |
     | S3 | Amazon S3, Backblaze B2, Wasabi, MinIO und andere |
     | rest-server | Der REST-Server von restic |
 
@@ -189,7 +195,7 @@ Auch dieses Menü gibt es nur mit Panel.
 | Menüpunkt | Was passiert |
 | --- | --- |
 | phpMyAdmin installieren/aktualisieren | Installiert phpMyAdmin unter `/phpmyadmin` deiner Panel-Domain und legt einen Benutzer an. Es ist öffentlich erreichbar, verwende sichere Passwörter. |
-| Database-Host für Gameserver einrichten | Öffnet MariaDB so, dass Gameserver eigene Datenbanken anlegen können, und zeigt dir die Werte für Admin → Databases. Die Datenbank des Panels selbst wird dafür nie verwendet. |
+| Database-Host für Gameserver einrichten | Öffnet MariaDB so, dass Gameserver eigene Datenbanken anlegen können, und legt den Database-Host automatisch im Panel an (liegt das Panel auf einem anderen Server, bekommst du die Werte angezeigt, optional als Download-Link). Die Firewall für Port 3306 wird nur für die Nodes deines Panels geöffnet und jede Nacht um 04:30 Uhr erneut abgeglichen. Die Datenbank des Panels selbst wird dafür nie verwendet. |
 
 ### Server & Sicherheit
 
@@ -199,6 +205,7 @@ Auch dieses Menü gibt es nur mit Panel.
 | fail2ban | Sperrt IP-Adressen nach wiederholt falschen SSH-Passwörtern. Gesperrte Adressen, z. B. deine eigene, kannst du hier entsperren. |
 | Automatische Sicherheitsupdates | Installiert Sicherheitsupdates täglich von selbst, einschließlich PHP aus der Quelle des Panels. Docker-Pakete gehören bewusst nicht dazu, sonst würden alle Gameserver ungeplant neu starten. |
 | SSH-Loginseite einrichten/entfernen | Zeigt nach dem SSH-Login eine Übersicht mit Updates, Laufzeit, Netzwerk, letztem Login und Hinweisen zu Backups und Updates. |
+| Verwaltung nach SSH-Login | Öffnet die Verwaltung automatisch nach jedem SSH-Login als root. Lässt sich hier jederzeit wieder ausschalten. |
 
 ### Deinstallieren
 
@@ -222,6 +229,8 @@ Für häufige Aufgaben musst du das Menü nicht öffnen:
 | `gmd firewall` | Öffnet die Firewall-Verwaltung |
 | `gmd logs` | Zeigt die Logs |
 | `gmd status` | Zeigt die Statuszeile |
+| `gmd support` | Erstellt das Support-Paket, optional mit Upload zu mclo.gs |
+| `gmd dbhost-sync` | Gleicht die Firewall des Database-Hosts mit den Nodes ab (ohne Dialoge) |
 | `gmd hilfe` | Zeigt alle Kurzbefehle |
 
 !!! tip "Gleichwertige Befehle"
@@ -238,17 +247,16 @@ Die Reihenfolge ist wichtig: `--fix` funktioniert nur direkt nach `--text`.
 
 ## Automatik und Sicherheit
 
-- **Backups und Updates:** Das automatische Backup läuft täglich, standardmäßig um 04:00 Uhr. Automatische Panel- und Wings-Updates sind standardmäßig aus.
+- **Backups und Updates:** Das automatische Backup läuft täglich, standardmäßig um 04:00 Uhr. Automatische Panel- und Wings-Updates sind standardmäßig aus. Der Firewall-Abgleich des Database-Hosts läuft um 04:30 Uhr.
 - **Login-Hinweis (MOTD):** Mit der SSH-Loginseite siehst du nach dem Anmelden, ob das letzte Backup oder Update fehlgeschlagen ist.
 - **Logs:** Jede Installation und Aktion wird unter `/var/log/germandactyl-setup/` protokolliert, auch die der automatischen Backups und Updates.
 - **Einstellungen:** Das Skript speichert seinen Zustand in `/etc/germandactyl/setup.conf`. Die Datei ist nur für root lesbar.
-- **Signierte Skripte:** Alle nachgeladenen Dateien werden gegen eine signierte Prüfsummenliste geprüft, sobald der Schlüssel dafür veröffentlicht ist. Ändert jemand Dateien im Repository, startet das Skript nicht.
-- **Signierte Patches:** Die deutsche Übersetzung wird nur angewendet, wenn die Signatur ihrer Prüfsummenliste und die Prüfsumme der Patch-Datei stimmen. Eine Option zum Überspringen gibt es bewusst nicht.
-- **Passwörter:** Zugangsdaten tauchen nie in der Prozessliste auf, und das Support-Paket entfernt Passwörter, Schlüssel und Tokens.
+- **Geprüfte Patches:** Die deutsche Übersetzung wird nur angewendet, wenn die Prüfsumme der Patch-Datei zur Liste `patches/SHA256SUMS` passt. Eine Option zum Überspringen gibt es bewusst nicht.
+- **Passwörter:** Zugangsdaten tauchen nie in der Prozessliste auf, und das Support-Paket entfernt Passwörter, Schlüssel, Tokens und E-Mail-Adressen. Download-Links für Zugangsdaten sind nur für die Dauer des Dialogs gültig und werden nicht im Zugriffsprotokoll von nginx gespeichert.
 
 ## Fehler melden
 
-Hast du einen Fehler gefunden oder startet das Skript nicht? Eröffne ein [Issue](https://github.com/pavl21/pterodactyl-gui-installer/issues). Hänge am besten das **Support-Paket** an (Verwaltung → Hilfe & Analyse → Support-Paket erstellen). Es enthält die nötigen Infos, und Passwörter und Schlüssel sind bereits entfernt. Prüfe den Inhalt trotzdem kurz, bevor du die Datei weitergibst.
+Hast du einen Fehler gefunden oder startet das Skript nicht? Eröffne ein [Issue](https://github.com/pavl21/pterodactyl-gui-installer/issues). Hänge am besten das **Support-Paket** an (`gmd support` oder Verwaltung → Hilfe & Analyse → Support-Paket erstellen). Es enthält die nötigen Infos, und Passwörter, Schlüssel und E-Mail-Adressen sind bereits entfernt. Den optionalen Link von mclo.gs kannst du direkt im Issue oder im Support-Chat teilen. Prüfe die Vorschau trotzdem kurz, bevor du etwas hochlädst oder weitergibst.
 
 ## Verwendete Projekte
 
