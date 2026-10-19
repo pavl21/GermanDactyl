@@ -825,7 +825,7 @@ Startet das Skript bei dir nicht, eröffne bitte ein <a href="https://github.com
 <p>Läuft auf dem Server schon Pterodactyl, öffnet sich stattdessen direkt die <a href="#die-verwaltung">Verwaltung</a>.</p>
 <h3 id="was-beim-ersten-start-passiert">Was beim ersten Start passiert</h3>
 <ol>
-<li><strong>Grundpakete:</strong> Fehlende Hilfsprogramme (u. a. <code>whiptail</code>, <code>curl</code>, <code>dig</code>) werden installiert.</li>
+<li><strong>Grundpakete:</strong> Fehlende Hilfsprogramme (u. a. <code>whiptail</code>, <code>curl</code>, <code>dig</code>) werden installiert. Du siehst dabei eine kleine Schrittliste mit Häkchen.</li>
 <li><strong>Willkommensfenster:</strong> Du bestätigst, dass Pakete installiert werden dürfen, du die Nutzungsbedingungen von Let's Encrypt akzeptierst und die Domain dir gehört.</li>
 <li><strong>Vorprüfungen:</strong> Das Skript prüft die IPv4-Verbindung, das Betriebssystem und die CPU-Architektur (amd64 und arm64), die Systemzeit (wird bei Bedarf per NTP synchronisiert), den freien Speicherplatz, ob der Server nur eine private IP hat (Heimnetz/NAT) und ob Port 80/443 frei sind. Läuft dort Apache, bietet es an, ihn zu deaktivieren.</li>
 <li><strong>Installationsmenü:</strong> Hier wählst du, was installiert wird.</li>
@@ -860,6 +860,10 @@ Startet das Skript bei dir nicht, eröffne bitte ein <a href="https://github.com
 </tr>
 </tbody>
 </table>
+<div class="admonition tip">
+<p class="admonition-title">Express-Modus</p>
+<p>Bei <strong>Panel + Wings</strong> kannst du den Express-Modus wählen: Du gibst nur die Domain ein, alles andere bekommt sichere Standardwerte (Zertifikat ohne E-Mail-Adresse, Benutzer <code>admin</code>, Firewall, fail2ban, Sicherheitsupdates, tägliche Backups, Swap und Node-Ressourcen automatisch). Die Zusammenfassung siehst du trotzdem vor dem Start.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Pelican</p>
 <p>Pelican ist noch eine Beta-Version. Die Verwaltungsfunktionen (Backups, Blueprint, phpMyAdmin usw.) sind nur für Pterodactyl vorgesehen.</p>
@@ -884,7 +888,7 @@ Startet das Skript bei dir nicht, eröffne bitte ein <a href="https://github.com
 </tr>
 <tr>
 <td>E-Mail-Adresse</td>
-<td>Für das Let's-Encrypt-Zertifikat und dein Administrator-Konto</td>
+<td>Optional. Ohne Angabe wird das Zertifikat ohne Kontakt-Adresse ausgestellt und das Administrator-Konto heißt <code>admin@&lt;deine-domain&gt;</code></td>
 </tr>
 <tr>
 <td>Benutzername</td>
@@ -916,15 +920,16 @@ Startet das Skript bei dir nicht, eröffne bitte ein <a href="https://github.com
 </tr>
 </tbody>
 </table>
+<p>Swap-Speicher und die Ressourcen der Wings-Node (Arbeitsspeicher und Festplatte mit Reserve) werden automatisch anhand deines Servers gesetzt, du musst nichts eintragen.</p>
 <p>Danach siehst du eine <strong>Zusammenfassung</strong> aller Angaben. Erst wenn du bestätigst, beginnt die Installation. Sie dauert je nach Server 5 bis 20 Minuten. Bricht die SSH-Verbindung ab, wird sie unterbrochen. Starte das Skript bei einer instabilen Verbindung daher in <code>tmux</code> oder <code>screen</code>. Bricht ein späterer Schritt ab, setzt der nächste Start die Einrichtung mit deinen Angaben fort, statt neu zu installieren.</p>
 <h3 id="zugangsdaten-am-ende">Zugangsdaten am Ende</h3>
-<p>Am Ende erscheinen die Zugangsdaten für das Panel (Adresse, Benutzername, E-Mail, Passwort) und, falls du Backups aktiviert hast, das Passwort des Backup-Archivs.</p>
+<p>Am Ende erscheinen die Zugangsdaten für das Panel (Adresse, Benutzername, E-Mail, Passwort) und, falls du Backups aktiviert hast, das Passwort des Backup-Archivs. Beides kannst du zusätzlich als Textdatei über einen <strong>Download-Link</strong> deiner Panel-Domain herunterladen. Der Link ist nur so lange gültig, wie der Dialog offen ist, höchstens 90 Sekunden, danach wird die Datei gelöscht.</p>
 <div class="admonition danger">
 <p class="admonition-title">Nur einmal sichtbar</p>
 <p>Die Zugangsdaten werden <strong>nur ein einziges Mal</strong> angezeigt. Speichere sie sofort in deinem Passwortmanager. Auf Wunsch legt das Skript sie zusätzlich in <code>/root/germandactyl-zugangsdaten.txt</code> ab (nur für root lesbar). Lösche die Datei, sobald du die Daten sicher abgelegt hast.</p>
 </div>
 <h2 id="die-verwaltung">Die Verwaltung</h2>
-<p>Nach der Installation startest du die Verwaltung jederzeit mit <code>germandactyl</code>, kurz <code>gmd</code> (zusätzlich <code>gd</code>). Die Kurzformen werden nur angelegt, wenn der Befehl auf dem Server noch frei ist. <code>germandactyl</code> funktioniert immer. Der Befehl lädt jedes Mal die aktuelle Version des Skripts.</p>
+<p>Nach der Installation startest du die Verwaltung jederzeit mit <code>germandactyl</code>, kurz <code>gmd</code> (zusätzlich <code>gd</code>). Die Kurzformen werden nur angelegt, wenn der Befehl auf dem Server noch frei ist. <code>germandactyl</code> funktioniert immer. Der Befehl startet sofort aus einer lokalen Kopie unter <code>/usr/local/lib/germandactyl</code> und prüft im Hintergrund, ob es eine neuere Version gibt. Auf Wunsch öffnet sich die Verwaltung automatisch nach jedem SSH-Login als root (Server &amp; Sicherheit → Verwaltung nach SSH-Login).</p>
 <h3 id="die-statuszeile">Die Statuszeile</h3>
 <p>Über dem Hauptmenü zeigt die Statuszeile in zwei Zeilen, wie es deinem Server geht:</p>
 <table>
@@ -977,7 +982,7 @@ Startet das Skript bei dir nicht, eröffne bitte ein <a href="https://github.com
 <tbody>
 <tr>
 <td>Analyse starten</td>
-<td>Prüft System, Updates, nginx, SSL-Zertifikate (auch die tatsächlich ausgelieferten), Dienste, Panel, Wings, DNS und Backups. Optional misst sie die Internetgeschwindigkeit. Behebbare Probleme kannst du danach automatisch beheben lassen.</td>
+<td>Prüft System, Updates, nginx, SSL-Zertifikate (auch die tatsächlich ausgelieferten), Dienste, Panel, Wings, DNS, Backups und die Firewall-Freigaben des Database-Hosts. Optional misst sie die Internetgeschwindigkeit. Behebbare Probleme kannst du danach automatisch beheben lassen.</td>
 </tr>
 <tr>
 <td>Ich habe mich ausgesperrt</td>
@@ -1001,7 +1006,7 @@ Startet das Skript bei dir nicht, eröffne bitte ein <a href="https://github.com
 </tr>
 <tr>
 <td>Support-Paket erstellen</td>
-<td>Packt Versionen, Dienststatus, Analyse, Konfiguration und Logs in ein Archiv unter <code>/root</code>. Passwörter, Schlüssel und Tokens werden entfernt, hochgeladen wird nichts.</td>
+<td>Packt Versionen, Dienststatus, Analyse, Konfiguration und Logs in ein Archiv und eine Textdatei unter <code>/root</code>. Passwörter, Schlüssel, Tokens und E-Mail-Adressen werden entfernt. Optional lädst du die Textdatei nach einer Vorschau zu <a href="https://mclo.gs">mclo.gs</a> hoch und bekommst einen Link für den Support. Achtung: Der Link ist öffentlich abrufbar.</td>
 </tr>
 </tbody>
 </table>
@@ -1047,7 +1052,7 @@ Startet das Skript bei dir nicht, eröffne bitte ein <a href="https://github.com
 <tbody>
 <tr>
 <td>Panel aktualisieren</td>
-<td>Prüft zuerst, ob du Dateien des Panels selbst verändert hast (Themes, Addons). Du kannst sie sichern und danach wieder anwenden lassen. Vor dem Update entsteht automatisch eine Sicherung aus Dateien und Datenbank, schlägt das Update fehl, wird sie zurückgespielt. Ein Wechsel auf eine ältere Version ist nicht möglich.</td>
+<td>Prüft zuerst, ob du Dateien des Panels selbst verändert hast (Themes, Addons). Du kannst sie sichern und danach wieder anwenden lassen. Dateien von Blueprint zählen dabei nicht als eigene Änderung. Ist Blueprint installiert, wird die Übersetzung mit Unschärfe nachgezogen. Vor dem Update entsteht automatisch eine Sicherung aus Dateien und Datenbank, schlägt das Update fehl, wird sie zurückgespielt. Ein Wechsel auf eine ältere Version ist nicht möglich.</td>
 </tr>
 <tr>
 <td>Wings aktualisieren</td>
@@ -1114,8 +1119,12 @@ Startet das Skript bei dir nicht, eröffne bitte ein <a href="https://github.com
 <td>Ordner oder eingehängtes Laufwerk, z. B. <code>/mnt/backup</code></td>
 </tr>
 <tr>
+<td>Hetzner Storage Box</td>
+<td>Wird automatisch eingerichtet: Benutzer und Ordner eingeben, der SSH-Schlüssel wird erzeugt und hinterlegt (Port 23)</td>
+</tr>
+<tr>
 <td>SFTP</td>
-<td>Storage Box oder ein anderer Server per SSH (der Schlüssel muss ohne Passphrase in <code>/root/.ssh</code> liegen)</td>
+<td>Ein anderer Server per SSH (der Schlüssel muss ohne Passphrase in <code>/root/.ssh</code> liegen)</td>
 </tr>
 <tr>
 <td>S3</td>
@@ -1229,7 +1238,7 @@ Startet das Skript bei dir nicht, eröffne bitte ein <a href="https://github.com
 </tr>
 <tr>
 <td>Database-Host für Gameserver einrichten</td>
-<td>Öffnet MariaDB so, dass Gameserver eigene Datenbanken anlegen können, und zeigt dir die Werte für Admin → Databases. Die Datenbank des Panels selbst wird dafür nie verwendet.</td>
+<td>Öffnet MariaDB so, dass Gameserver eigene Datenbanken anlegen können, und legt den Database-Host automatisch im Panel an (liegt das Panel auf einem anderen Server, bekommst du die Werte angezeigt, optional als Download-Link). Die Firewall für Port 3306 wird nur für die Nodes deines Panels geöffnet und jede Nacht um 04:30 Uhr erneut abgeglichen. Die Datenbank des Panels selbst wird dafür nie verwendet.</td>
 </tr>
 </tbody>
 </table>
@@ -1257,6 +1266,10 @@ Startet das Skript bei dir nicht, eröffne bitte ein <a href="https://github.com
 <tr>
 <td>SSH-Loginseite einrichten/entfernen</td>
 <td>Zeigt nach dem SSH-Login eine Übersicht mit Updates, Laufzeit, Netzwerk, letztem Login und Hinweisen zu Backups und Updates.</td>
+</tr>
+<tr>
+<td>Verwaltung nach SSH-Login</td>
+<td>Öffnet die Verwaltung automatisch nach jedem SSH-Login als root. Lässt sich hier jederzeit wieder ausschalten.</td>
 </tr>
 </tbody>
 </table>
@@ -1321,6 +1334,14 @@ Startet das Skript bei dir nicht, eröffne bitte ein <a href="https://github.com
 <td>Zeigt die Statuszeile</td>
 </tr>
 <tr>
+<td><code>gmd support</code></td>
+<td>Erstellt das Support-Paket, optional mit Upload zu mclo.gs</td>
+</tr>
+<tr>
+<td><code>gmd dbhost-sync</code></td>
+<td>Gleicht die Firewall des Database-Hosts mit den Nodes ab (ohne Dialoge)</td>
+</tr>
+<tr>
 <td><code>gmd hilfe</code></td>
 <td>Zeigt alle Kurzbefehle</td>
 </tr>
@@ -1337,16 +1358,15 @@ bash<span class="w"> </span>analyse.sh<span class="w"> </span>--text<span class=
 <p>Die Reihenfolge ist wichtig: <code>--fix</code> funktioniert nur direkt nach <code>--text</code>.</p>
 <h2 id="automatik-und-sicherheit">Automatik und Sicherheit</h2>
 <ul>
-<li><strong>Backups und Updates:</strong> Das automatische Backup läuft täglich, standardmäßig um 04:00 Uhr. Automatische Panel- und Wings-Updates sind standardmäßig aus.</li>
+<li><strong>Backups und Updates:</strong> Das automatische Backup läuft täglich, standardmäßig um 04:00 Uhr. Automatische Panel- und Wings-Updates sind standardmäßig aus. Der Firewall-Abgleich des Database-Hosts läuft um 04:30 Uhr.</li>
 <li><strong>Login-Hinweis (MOTD):</strong> Mit der SSH-Loginseite siehst du nach dem Anmelden, ob das letzte Backup oder Update fehlgeschlagen ist.</li>
 <li><strong>Logs:</strong> Jede Installation und Aktion wird unter <code>/var/log/germandactyl-setup/</code> protokolliert, auch die der automatischen Backups und Updates.</li>
 <li><strong>Einstellungen:</strong> Das Skript speichert seinen Zustand in <code>/etc/germandactyl/setup.conf</code>. Die Datei ist nur für root lesbar.</li>
-<li><strong>Signierte Skripte:</strong> Alle nachgeladenen Dateien werden gegen eine signierte Prüfsummenliste geprüft, sobald der Schlüssel dafür veröffentlicht ist. Ändert jemand Dateien im Repository, startet das Skript nicht.</li>
-<li><strong>Signierte Patches:</strong> Die deutsche Übersetzung wird nur angewendet, wenn die Signatur ihrer Prüfsummenliste und die Prüfsumme der Patch-Datei stimmen. Eine Option zum Überspringen gibt es bewusst nicht.</li>
-<li><strong>Passwörter:</strong> Zugangsdaten tauchen nie in der Prozessliste auf, und das Support-Paket entfernt Passwörter, Schlüssel und Tokens.</li>
+<li><strong>Geprüfte Patches:</strong> Die deutsche Übersetzung wird nur angewendet, wenn die Prüfsumme der Patch-Datei zur Liste <code>patches/SHA256SUMS</code> passt. Eine Option zum Überspringen gibt es bewusst nicht.</li>
+<li><strong>Passwörter:</strong> Zugangsdaten tauchen nie in der Prozessliste auf, und das Support-Paket entfernt Passwörter, Schlüssel, Tokens und E-Mail-Adressen. Download-Links für Zugangsdaten sind nur für die Dauer des Dialogs gültig und werden nicht im Zugriffsprotokoll von nginx gespeichert.</li>
 </ul>
 <h2 id="fehler-melden">Fehler melden</h2>
-<p>Hast du einen Fehler gefunden oder startet das Skript nicht? Eröffne ein <a href="https://github.com/pavl21/pterodactyl-gui-installer/issues">Issue</a>. Hänge am besten das <strong>Support-Paket</strong> an (Verwaltung → Hilfe &amp; Analyse → Support-Paket erstellen). Es enthält die nötigen Infos, und Passwörter und Schlüssel sind bereits entfernt. Prüfe den Inhalt trotzdem kurz, bevor du die Datei weitergibst.</p>
+<p>Hast du einen Fehler gefunden oder startet das Skript nicht? Eröffne ein <a href="https://github.com/pavl21/pterodactyl-gui-installer/issues">Issue</a>. Hänge am besten das <strong>Support-Paket</strong> an (<code>gmd support</code> oder Verwaltung → Hilfe &amp; Analyse → Support-Paket erstellen). Es enthält die nötigen Infos, und Passwörter, Schlüssel und E-Mail-Adressen sind bereits entfernt. Den optionalen Link von mclo.gs kannst du direkt im Issue oder im Support-Chat teilen. Prüfe die Vorschau trotzdem kurz, bevor du etwas hochlädst oder weitergibst.</p>
 <h2 id="verwendete-projekte">Verwendete Projekte</h2>
 <p>Einige Teile des Skripts stammen von anderen Entwicklern oder nutzen deren Software im Hintergrund:</p>
 <ul>

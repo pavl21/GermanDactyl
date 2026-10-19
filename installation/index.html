@@ -401,10 +401,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#signierte-patches" class="md-nav__link">
+  <a href="#geprufte-patches" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Signierte Patches
+        Geprüfte Patches
       
     </span>
   </a>
@@ -781,7 +781,7 @@ Panel-Version passt meist nicht vollständig.</p>
 </table>
 <h3 id="was-der-installer-macht">Was der Installer macht</h3>
 <ol>
-<li><strong>Patch laden und Signatur prüfen:</strong> Der Installer prüft Root-Rechte, Panel-Pfad und Panel-Version, lädt den passenden Patch und prüft Signatur und Prüfsumme.</li>
+<li><strong>Patch laden und Prüfsumme prüfen:</strong> Der Installer prüft Root-Rechte, Panel-Pfad und Panel-Version, lädt den passenden Patch und vergleicht seine Prüfsumme.</li>
 <li><strong>Bereits installiert?</strong> Ist der Patch schon angewendet, endet der Installer hier ohne Änderungen. Sonst folgen – nach einer kurzen Wartezeit (überspringen mit <code>-y</code>) – die weiteren Schritte.</li>
 <li><strong>Abhängigkeiten:</strong> PHP, Node.js (die Mindestversion liest der Installer aus der <code>package.json</code> des Panels, ab 1.12 ist das Node.js ≥ 22; fehlt sie, wird sie über NodeSource installiert) und Yarn bzw. npm. Fehlende Pakete installiert er unter Debian/Ubuntu selbst.</li>
 <li><strong>Backup</strong> nach <code>/var/backups/germandactyl/</code> (<code>panel-&lt;version&gt;-install-&lt;zeit&gt;.tar.gz</code>).</li>
@@ -799,17 +799,12 @@ Panel-Version passt meist nicht vollständig.</p>
 <p>Unter <strong>Admin → Benutzer</strong> kannst du die Sprache einzelner Benutzer wieder auf Englisch stellen. Die fest
 eingebauten Oberflächentexte bleiben jedoch deutsch.</p>
 </div>
-<h3 id="signierte-patches">Signierte Patches</h3>
-<p>Der Installer wendet nur Patches an, deren SHA-256-Prüfsumme in der signierten Liste
-<a href="https://github.com/pavl21/GermanDactyl/blob/main/patches/SHA256SUMS"><code>patches/SHA256SUMS</code></a> steht. Die Signatur
-prüft er mit <code>gpgv</code> gegen den im Skript fest hinterlegten Schlüssel. Ist die Signatur ungültig oder wurde der Patch
-verändert, bricht die Installation ab, ohne etwas am Panel zu ändern.</p>
-<p>Fingerabdruck des Signaturschlüssels:</p>
-<div class="highlight"><pre><span></span><code>2CB6 9766 DC1E 05E8 D805  D4C0 DF5A 303D 4015 76B8
-</code></pre></div>
+<h3 id="geprufte-patches">Geprüfte Patches</h3>
+<p>Der Installer wendet nur Patches an, deren SHA-256-Prüfsumme in der Liste
+<a href="https://github.com/pavl21/GermanDactyl/blob/main/patches/SHA256SUMS"><code>patches/SHA256SUMS</code></a> steht. Stimmt die
+Prüfsumme nicht oder fehlt der Eintrag, bricht die Installation ab, ohne etwas am Panel zu ändern.</p>
 <p>Manuell prüfen kannst du einen Patch so (im Ordner <code>patches/</code>):</p>
-<div class="highlight"><pre><span></span><code>gpg<span class="w"> </span>--import<span class="w"> </span>germandactyl-signing-key.asc
-gpg<span class="w"> </span>--verify<span class="w"> </span>SHA256SUMS.asc<span class="w"> </span>SHA256SUMS<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sha256sum<span class="w"> </span>--ignore-missing<span class="w"> </span>-c<span class="w"> </span>SHA256SUMS
+<div class="highlight"><pre><span></span><code>sha256sum<span class="w"> </span>--ignore-missing<span class="w"> </span>-c<span class="w"> </span>SHA256SUMS
 </code></pre></div>
 <h2 id="patches-manuell-anwenden">Patches manuell anwenden</h2>
 <p>Funktioniert die automatische Installation bei dir nicht (z. B. weil deine Distribution nicht unterstützt wird),
