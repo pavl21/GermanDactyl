@@ -6,8 +6,8 @@
 
 ## Voraussetzungen
 
-- Pterodactyl Panel, installiert nach der [offiziellen Anleitung](https://pterodactyl.io/panel/1.0/getting_started.html) (Release-Tarball)
-- Ubuntu 22.04/24.04 oder Debian 11/12/13
+- Pterodactyl Panel, installiert nach der [offiziellen Anleitung](https://docs.pterodactyl.io/docs/panel/getting-started) (Release-Tarball)
+- Ubuntu 22.04/24.04/26.04 oder Debian 11/12/13
 - PHP 8.2 oder 8.3
 - Node.js ≥ 22 (wird bei Bedarf automatisch installiert)
 - Mindestens 2 GB RAM (oder entsprechend Swap) für den Build
@@ -35,17 +35,17 @@ Füge den folgenden Befehl in die Konsole deines Servers ein. GermanDactyl insta
 
 === ":material-flash: Normale Installation"
     ```shell
-    curl -sSL https://install.germandactyl.de/ | sudo bash -s --
+    curl -fsSL https://install.germandactyl.de/ | sudo bash -s --
     ```
 
 === ":material-folder: Ordner auswählen"
     ```shell
-    curl -sSL https://install.germandactyl.de/ | sudo bash -s -- -d /var/www/pterodactyl -y
+    curl -fsSL https://install.germandactyl.de/ | sudo bash -s -- -d /var/www/pterodactyl
     ```
 
 === ":material-update: Version erzwingen"
     ```shell
-    curl -sSL https://install.germandactyl.de/ | sudo bash -s -- -v 1.15.1
+    curl -fsSL https://install.germandactyl.de/ | sudo bash -s -- -v 1.15.1
     ```
     !!! warning "Auf eigenes Risiko"
         Nutze `-v` nur, wenn die vom Panel gemeldete Version nicht stimmt (z. B. `canary`). Ein Patch für eine andere
@@ -57,21 +57,24 @@ Füge den folgenden Befehl in die Konsole deines Servers ein. GermanDactyl insta
 | --- | --- |
 | `-d <pfad>` | Pfad zum Panel (Standard: `/var/www/pterodactyl`) |
 | `-v <version>` | Patch-Version erzwingen |
-| `-y` | ohne 10-Sekunden-Wartezeit starten |
+| `-y` | ohne Wartezeit starten und Rückfragen mit Ja beantworten |
 | `-u` | GermanDactyl deinstallieren (zurück auf Englisch), siehe [Deinstallation](uninstall.md) |
 | `-h` | Hilfe anzeigen |
 
 ### Was der Installer macht
 
-1. **Prüfungen:** Root-Rechte, Panel-Pfad, Panel-Version, Distribution (Debian/Ubuntu), Node.js ≥ 22 (sonst wird Node 22 über NodeSource installiert) und Yarn.
-2. **Backup** nach `/var/backups/germandactyl/`.
-3. **Wartungsmodus** einschalten.
-4. **Patch** herunterladen, prüfen und anwenden.
-5. **Sprache umstellen:** Panel-Standardsprache und alle bestehenden Benutzer auf Deutsch, neue Benutzer bekommen ebenfalls Deutsch.
-6. **Build** der Oberfläche mit Yarn.
-7. **Cache leeren** und **Rechte setzen**, danach Wartungsmodus beenden.
+1. **Patch laden und Signatur prüfen:** Der Installer prüft Root-Rechte, Panel-Pfad und Panel-Version, lädt den passenden Patch und prüft Signatur und Prüfsumme.
+2. **Bereits installiert?** Ist der Patch schon angewendet, endet der Installer hier ohne Änderungen. Sonst folgen – nach einer kurzen Wartezeit (überspringen mit `-y`) – die weiteren Schritte.
+3. **Abhängigkeiten:** PHP, Node.js (die Mindestversion liest der Installer aus der `package.json` des Panels, ab 1.12 ist das Node.js ≥ 22; fehlt sie, wird sie über NodeSource installiert) und Yarn bzw. npm. Fehlende Pakete installiert er unter Debian/Ubuntu selbst.
+4. **Backup** nach `/var/backups/germandactyl/` (`panel-<version>-install-<zeit>.tar.gz`).
+5. **Wartungsmodus** einschalten.
+6. **Patch anwenden.**
+7. **Build** der Oberfläche mit Yarn (bei Panels mit `package-lock.json` statt `yarn.lock` mit npm).
+8. **Sprache umstellen:** Panel-Standardsprache und alle bestehenden Benutzer auf Deutsch, neue Benutzer bekommen ebenfalls Deutsch.
+9. **Caches leeren, Rechte setzen** und die Queue-Worker neu starten.
+10. **Wartungsmodus beenden.**
 
-Schlägt der Build fehl, wird das Backup automatisch wiederhergestellt. Alle Ausgaben landen in
+Schlägt ein Schritt nach dem Anwenden des Patches fehl (z. B. der Build), wird das Backup automatisch wiederhergestellt. Alle Ausgaben landen in
 `/var/log/germandactyl.log` (Fallback: `germandactyl.debug.log` im Panel-Ordner).
 
 !!! tip "Sprache pro Benutzer"
@@ -132,6 +135,7 @@ kannst du den Patch auch manuell anwenden. Im Beispiel liegt das Panel unter `/v
     ```
 
 5. Stelle die Sprache ein: `APP_LOCALE=de` in der `.env` setzen und unter **Admin → Benutzer** die Sprache der
-   Benutzer auf Deutsch stellen.
+   Benutzer auf Deutsch stellen. Zusätzlich musst du unter **Admin → Einstellungen** die Standardsprache auf
+   Deutsch stellen (die Einstellung in der Datenbank überschreibt `APP_LOCALE`).
 
 Das war's – dein Pterodactyl Panel ist jetzt auf Deutsch. :)

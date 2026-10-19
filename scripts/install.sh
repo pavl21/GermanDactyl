@@ -10,9 +10,9 @@
 # Da stdin dabei die Pipe ist, liest das Skript Rückfragen von /dev/tty.
 #
 # Ablauf der Installation:
-#   Panel finden → Patch laden und prüfen → Abhängigkeiten → Backup →
-#   Wartungsmodus → Patch anwenden → Panel bauen → Sprache auf Deutsch →
-#   Caches leeren, Rechte setzen → Wartungsmodus beenden
+#   Panel finden → Patch laden und prüfen → bereits installiert? →
+#   Abhängigkeiten → Backup → Wartungsmodus → Patch anwenden → Panel bauen →
+#   Sprache auf Deutsch → Caches leeren, Rechte setzen → Wartungsmodus beenden
 #
 # Schlägt ein Schritt nach dem Patchen fehl, wird das Backup automatisch
 # zurückgespielt.
@@ -35,6 +35,8 @@ readonly SIGNING_KEY_FPR="2CB69766DC1E05E8D805D4C0DF5A303D401576B8"
 readonly SIGNING_KEY_B64="mDMEarlszRYJKwYBBAHaRw8BAQdA1wvFzK9PQQL8O8H7ZEZVUyNka2ss34DjIkIBxWpClgy0NEdlcm1hbkRhY3R5bCBQYXRjaCBTaWduaW5nIChodHRwczovL2dlcm1hbmRhY3R5bC5kZSmIkwQTFgoAOxYhBCy2l2bcHgXo2AXUwN9aMD1AFXa4BQJquWzNAhsDBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEN9aMD1AFXa41lABAKJvPQhh6P4CKW54qnN6pCKuYa+ZbY6/rSxUnXToMNxrAQDyL23730jn08Pu6UaSTZQZ/wnXJznaQFuudwFuMpORBg=="
 readonly PANEL_RELEASES=https://github.com/pterodactyl/panel/releases/download
 readonly BACKUP_ROOT=/var/backups/germandactyl
+# Node.js: Fallback, falls package.json keine Mindestversion (engines.node) nennt.
+# Wird Node.js nachinstalliert, dann mindestens diese Hauptversion.
 readonly MIN_NODE_MAJOR=22
 readonly MIN_MEMORY_MB=2048
 
@@ -71,11 +73,13 @@ INSTALLED_PATCH="" # Kopie des installierten Patches (für -u)
 LOG=""
 STAMP=$(date +%Y%m%d-%H%M%S)
 BACKUP_FILE=""
+BACKUP_DONE=0
 PATCH_FILE=""
 TMP_DIR=""
 MAINTENANCE=0
 ROLLBACK_NEEDED=0
 CREATED_FILES=()
+STALE_FILES=()    # Vom Patch neu angelegte Dateien, die schon existieren
 USE_APT=0
 
 # ---------------------------------------------------------------------------
@@ -114,7 +118,7 @@ Optionen:
   -v <version>  Patch für diese Panel-Version verwenden, z. B. -v 1.15.1
                 (nötig bei Git-Installationen, die als "canary" erscheinen)
   -u            GermanDactyl deinstallieren und zurück zu Englisch wechseln
-  -y            Ohne 10 Sekunden Wartezeit starten
+  -y            Ohne Wartezeit starten und Rückfragen mit Ja beantworten
   -h            Diese Hilfe anzeigen
 
 Verfügbare Patches: $KNOWN_PATCHES
@@ -134,8 +138,13 @@ has_tty() {
 }
 
 # Ja/Nein-Rückfrage, Standard ist Nein. Ohne Terminal immer Nein.
+# Mit -y wird jede Rückfrage mit Ja beantwortet.
 ask_yes_no() {
     local answer=""
+    if [ "$ASSUME_YES" = 1 ]; then
+        printf 'Rückfrage "%s" wurde wegen -y mit Ja beantwortet.\n' "$1" >>"$LOG"
+        return 0
+    fi
     if ! has_tty; then
         send_warn "Keine Rückfrage möglich (kein Terminal). Es wird \"Nein\" angenommen."
         return 1
@@ -297,7 +306,7 @@ init_log() {
 list_available_patches() {
     local list
     list=$(curl -fsSL --max-time 10 "$PATCH_LIST_API" 2>/dev/null \
-        | sed -n 's/.*"name": *"v\([0-9][0-9.]*\)\.patch".*/\1/p' \
+        | sed -n 's/.*"name": *"v\([0-9][0-9.]*\(-[0-9A-Za-z.]*\)\?\)\.patch".*/\1/p' \
         | sort -V | paste -sd ' ' -) || true
     printf '%s\n' "${list:-$KNOWN_PATCHES}"
 }
@@ -392,10 +401,20 @@ verify_patch() {
     printf 'Signatur und Prüfsumme von %s sind gültig (%s).\n' "$name" "$actual" >>"$LOG"
 }
 
+# Versionen wie 1.15.1 oder 2.0.0-beta.2 sind erlaubt, alles andere nicht
+# (die Version landet in einer URL und in Dateinamen).
+validate_version() {
+    if [[ ! $VERSION =~ ^[0-9]+(\.[0-9]+)*(-[0-9A-Za-z.]+)?$ ]]; then
+        send_error "Die Version \"$VERSION\" ist ungültig. Erlaubt sind Angaben wie 1.15.1 oder 2.0.0-beta.2."
+    fi
+}
+
 find_patch() {
     if [ "$VERSION" = canary ]; then
         no_patch_error "Dein Panel meldet die Version \"canary\" (Installation aus Git). Welcher Patch passt, kann nicht automatisch erkannt werden."
     fi
+
+    validate_version
 
     if ! download_patch; then
         case "$DOWNLOAD_CODE" in
@@ -480,6 +499,17 @@ node_major() {
     echo "${v%%.*}"
 }
 
+# Mindestens nötige Node.js-Hauptversion laut package.json (engines.node),
+# sonst MIN_NODE_MAJOR.
+required_node_major() {
+    local m=""
+    if [ -f "$PTERODACTYL_PATH/package.json" ]; then
+        m=$(sed -n 's/.*"node": *">=\([0-9]*\).*/\1/p' "$PTERODACTYL_PATH/package.json" | head -n 1)
+    fi
+    [[ $m =~ ^[0-9]+$ ]] || m=$MIN_NODE_MAJOR
+    echo "$m"
+}
+
 ensure_git() {
     # "git apply" funktioniert auch außerhalb eines Git-Repositorys, git wird
     # aber trotzdem gebraucht.
@@ -502,21 +532,26 @@ ensure_php() {
 }
 
 ensure_node() {
-    local major
+    local major required target
     major=$(node_major)
-    if [ "$major" -ge "$MIN_NODE_MAJOR" ]; then
+    required=$(required_node_major)
+    if [ "$major" -ge "$required" ]; then
         return
     fi
+
+    # Zum Nachinstallieren eine von NodeSource unterstützte Version wählen.
+    target=$required
+    [ "$target" -ge "$MIN_NODE_MAJOR" ] || target=$MIN_NODE_MAJOR
 
     if [ "$major" -eq 0 ]; then
         send_info "Node.js wurde nicht gefunden."
     else
-        send_info "Node.js $major ist zu alt, das Panel braucht mindestens Node.js $MIN_NODE_MAJOR."
+        send_info "Node.js $major ist zu alt, das Panel braucht mindestens Node.js $required."
     fi
-    require_apt "Node.js $MIN_NODE_MAJOR"
+    require_apt "Node.js $target"
 
-    send_info "Node.js $MIN_NODE_MAJOR wird über NodeSource installiert. Das kann etwa eine Minute dauern …"
-    if ! curl -fsSL "https://deb.nodesource.com/setup_${MIN_NODE_MAJOR}.x" 2>>"$LOG" | bash - >>"$LOG" 2>&1; then
+    send_info "Node.js $target wird über NodeSource installiert. Das kann etwa eine Minute dauern …"
+    if ! curl -fsSL "https://deb.nodesource.com/setup_${target}.x" 2>>"$LOG" | bash - >>"$LOG" 2>&1; then
         send_error "Die NodeSource-Paketquelle konnte nicht eingerichtet werden."
     fi
     APT_UPDATED=1
@@ -524,12 +559,24 @@ ensure_node() {
     hash -r
 
     major=$(node_major)
-    [ "$major" -ge "$MIN_NODE_MAJOR" ] \
-        || send_error "Node.js $MIN_NODE_MAJOR konnte nicht installiert werden (gefunden: ${major})."
+    [ "$major" -ge "$required" ] \
+        || send_error "Node.js $target konnte nicht installiert werden (gefunden: ${major})."
     send_success "Node.js $(node -v) wurde installiert."
 }
 
+# Panels mit package-lock.json, aber ohne yarn.lock (ab 2.0) werden mit npm gebaut.
+uses_npm() {
+    [ -f "$PTERODACTYL_PATH/package-lock.json" ] && [ ! -f "$PTERODACTYL_PATH/yarn.lock" ]
+}
+
+ensure_npm() {
+    command -v npm >/dev/null 2>&1 \
+        || send_error "npm wurde nicht gefunden. Es gehört normalerweise zu Node.js – installiere es und starte das Skript erneut."
+}
+
 ensure_yarn() {
+    # Corepack soll beim Start von Yarn nie nachfragen (sonst hängt das Skript).
+    export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
     command -v yarn >/dev/null 2>&1 && return
     send_info "Yarn wird installiert …"
     if command -v npm >/dev/null 2>&1; then
@@ -538,6 +585,7 @@ ensure_yarn() {
     fi
     if ! command -v yarn >/dev/null 2>&1 && command -v corepack >/dev/null 2>&1; then
         run_logged corepack enable || true
+        run_logged corepack prepare yarn@1.22.22 --activate || true
         hash -r
     fi
     yarn --version >/dev/null 2>&1 || send_error "Yarn konnte nicht installiert werden. Installiere es mit \"npm install -g yarn\"."
@@ -555,7 +603,11 @@ check_memory() {
 install_build_deps() {
     ensure_php
     ensure_node
-    ensure_yarn
+    if uses_npm; then
+        ensure_npm
+    else
+        ensure_yarn
+    fi
     check_memory
 }
 
@@ -572,11 +624,12 @@ create_backup() {
     done
 
     install -d -m 700 "$BACKUP_ROOT"
-    BACKUP_FILE="$BACKUP_ROOT/panel-$PANEL_VERSION-$STAMP.tar.gz"
+    BACKUP_FILE="$BACKUP_ROOT/panel-$PANEL_VERSION-$MODE-$STAMP.tar.gz"
 
     send_info "Backup wird erstellt: $BACKUP_FILE"
     run_logged tar -czf "$BACKUP_FILE" -C "$PTERODACTYL_PATH" "${dirs[@]}" \
         || send_error "Das Backup konnte nicht erstellt werden (genug Speicherplatz frei?)."
+    BACKUP_DONE=1
     send_success "Backup erstellt."
 }
 
@@ -589,20 +642,37 @@ maintenance_down() {
     fi
 }
 
+# Führt einen Build-Schritt aus. Die Ausgabe landet zuerst in $BUILD_LOG (nur
+# dieser Schritt) und wird danach ans Hauptlog angehängt. So prüft die Suche
+# nach bekannten Fehlern nie die Ausgabe früherer Läufe.
+BUILD_LOG=""
+build_step() {
+    local rc=0
+    printf -- '--- %s ---\n' "$*" >>"$LOG"
+    : >"$BUILD_LOG"
+    "$@" >>"$BUILD_LOG" 2>&1 || rc=$?
+    cat "$BUILD_LOG" >>"$LOG"
+    return "$rc"
+}
+
 build_panel() {
-    send_info "Das Panel wird neu gebaut. Das dauert einige Minuten …"
-    printf -- '--- yarn install ---\n' >>"$LOG"
-    if ! run_logged yarn install --frozen-lockfile; then
-        show_log_tail
-        send_error "\"yarn install\" ist fehlgeschlagen."
+    local install_cmd=(yarn install --frozen-lockfile) build_cmd=(yarn run build:production)
+    if uses_npm; then
+        install_cmd=(npm ci)
+        build_cmd=(npm run build:production)
     fi
-    printf -- '--- yarn run build:production ---\n' >>"$LOG"
-    if ! run_logged yarn run build:production; then
+    BUILD_LOG="$TMP_DIR/build.log"
+
+    send_info "Das Panel wird neu gebaut. Das dauert einige Minuten …"
+    if ! build_step "${install_cmd[@]}"; then
+        show_log_tail
+        send_error "\"${install_cmd[*]}\" ist fehlgeschlagen."
+    fi
+    if ! build_step "${build_cmd[@]}"; then
         # Ältere Panel-Versionen (Webpack 4, z. B. v1.11.x) brauchen unter Node >= 17 den OpenSSL-Legacy-Provider.
-        if grep -q "ERR_OSSL_EVP_UNSUPPORTED" "$LOG"; then
+        if grep -q "ERR_OSSL_EVP_UNSUPPORTED" "$BUILD_LOG"; then
             send_warn "Build mit OpenSSL-Legacy-Modus wird erneut versucht (ältere Panel-Version) …"
-            printf -- '--- yarn run build:production (NODE_OPTIONS=--openssl-legacy-provider) ---\n' >>"$LOG"
-            if ! NODE_OPTIONS=--openssl-legacy-provider run_logged yarn run build:production; then
+            if ! NODE_OPTIONS=--openssl-legacy-provider build_step "${build_cmd[@]}"; then
                 show_log_tail
                 send_error "Der Build des Panels ist fehlgeschlagen."
             fi
@@ -699,17 +769,97 @@ countdown() {
     sleep 10
 }
 
-apply_patch() {
-    local check_log="$TMP_DIR/check.log" use_reject=0
+# Prüft, ob "git apply --check" (Log in $1) nur deshalb scheitert, weil vom Patch
+# neu anzulegende Dateien schon existieren (Reste einer früheren Übersetzung,
+# z. B. nach einem Panel-Update per Tarball). Die Pfade landen in STALE_FILES.
+# Gibt 1 zurück, wenn es andere Fehler gibt oder ein Pfad unzulässig ist.
+find_stale_files() {
+    local line file created found root real
+    STALE_FILES=()
 
+    while IFS= read -r line; do
+        case "$line" in
+            error:*) ;;
+            *) continue ;;
+        esac
+        if [[ $line =~ ^error:\ (.+):\ already\ exists\ in\ working\ directory$ ]]; then
+            file=${BASH_REMATCH[1]}
+        else
+            return 1
+        fi
+        found=0
+        for created in "${CREATED_FILES[@]}"; do
+            if [ "$created" = "$file" ]; then
+                found=1
+                break
+            fi
+        done
+        [ "$found" = 1 ] || return 1
+        STALE_FILES+=("$file")
+    done <"$1"
+    [ "${#STALE_FILES[@]}" -gt 0 ] || return 1
+
+    # Nur Pfade innerhalb des Panels und der erlaubten Ordner, keine Symlinks.
+    root=$(realpath -e -- "$PTERODACTYL_PATH") || return 1
+    for file in "${STALE_FILES[@]}"; do
+        printf '%s\n' "$file" | grep -Eq "$ALLOWED_PATCH_PATHS" || return 1
+        if printf '%s\n' "$file" | grep -Eq '(^|/)\.\.(/|$)|^/'; then
+            return 1
+        fi
+        [ -f "$PTERODACTYL_PATH/$file" ] && [ ! -L "$PTERODACTYL_PATH/$file" ] || return 1
+        real=$(realpath -e -- "$PTERODACTYL_PATH/$file") || return 1
+        [ "$real" = "$root/$file" ] || return 1
+    done
+}
+
+# Löscht die Dateien aus STALE_FILES und danach leer gewordene Ordner.
+remove_stale_files() {
+    local file
+    for file in "${STALE_FILES[@]}"; do
+        rm -f -- "$PTERODACTYL_PATH/$file"
+    done
+    for file in "${STALE_FILES[@]}"; do
+        (cd "$PTERODACTYL_PATH" && rmdir -p --ignore-fail-on-non-empty -- "$(dirname "$file")") 2>/dev/null || true
+    done
+}
+
+# Beendet das Skript, wenn der Patch schon vollständig angewendet ist.
+check_already_installed() {
     if git apply "${APPLY_OPTS[@]}" --reverse --check "$PATCH_FILE" >/dev/null 2>&1; then
         send_success "GermanDactyl ist für v$VERSION bereits installiert. Es gibt nichts zu tun."
         send_info "Zum Entfernen: Skript mit -u starten."
         exit 0
     fi
+}
+
+apply_patch() {
+    local check_log="$TMP_DIR/check.log" use_reject=0 check_ok=1
 
     if ! git apply "${APPLY_OPTS[@]}" --check "$PATCH_FILE" >"$check_log" 2>&1; then
+        check_ok=0
         cat "$check_log" >>"$LOG"
+
+        # Reste einer früheren Übersetzung (z. B. nach einem Panel-Update) ersetzen.
+        if find_stale_files "$check_log"; then
+            send_info "Reste einer früheren Übersetzung gefunden (z. B. nach einem Panel-Update) – sie werden durch die neue Version ersetzt."
+            # Das Backup muss vor dem Löschen laufen. Scheitert danach etwas,
+            # wird es über den Rollback wieder zurückgespielt.
+            if [ "$BACKUP_DONE" != 1 ]; then
+                create_backup
+            fi
+            ROLLBACK_NEEDED=1
+            printf -- '--- alte Übersetzung entfernen ---\n' >>"$LOG"
+            printf '%s\n' "${STALE_FILES[@]}" >>"$LOG"
+            remove_stale_files
+            if git apply "${APPLY_OPTS[@]}" --check "$PATCH_FILE" >"$check_log" 2>&1; then
+                check_ok=1
+            else
+                cat "$check_log" >>"$LOG"
+            fi
+        fi
+    fi
+
+    if [ "$check_ok" = 0 ]; then
         send_warn "Der Patch passt nicht vollständig zu deinem Panel. Betroffene Dateien:"
         show_failed_files "$check_log"
         if [ -d "$PTERODACTYL_PATH/resources/lang/de" ]; then
@@ -724,8 +874,9 @@ apply_patch() {
         fi
     fi
 
-    create_backup
-    cp "$PATCH_FILE" "$INSTALLED_PATCH"
+    if [ "$BACKUP_DONE" != 1 ]; then
+        create_backup
+    fi
     maintenance_down
 
     ROLLBACK_NEEDED=1
@@ -749,7 +900,7 @@ handle_rejects() {
         install -d "$rej_dir/$(dirname "$file")"
         mv "$file" "$rej_dir/$file"
         count=$((count + 1))
-    done < <(find resources app public -name '*.rej' -print0 2>/dev/null)
+    done < <(find "${ALLOWED_DIRS[@]}" -name '*.rej' -print0 2>/dev/null)
 
     if [ "$count" -gt 0 ]; then
         send_warn "$count Datei(en) wurden nicht vollständig gepatcht. Die abgelehnten Stellen liegen unter $rej_dir."
@@ -758,17 +909,23 @@ handle_rejects() {
 
 do_install() {
     find_patch
-    countdown "Die Installation"
 
     detect_distro
     ensure_git
-    install_build_deps
-
     cd "$PTERODACTYL_PATH"
     inspect_patch
+    check_already_installed
+
+    countdown "Die Installation"
+    install_build_deps
+
     apply_patch
     build_panel
     ROLLBACK_NEEDED=0
+
+    # Kopie des Patches für die Deinstallation, erst nach erfolgreichem Build.
+    cp "$PATCH_FILE" "$INSTALLED_PATCH" \
+        || send_warn "Der Patch konnte nicht nach $INSTALLED_PATCH kopiert werden. Die Deinstallation lädt ihn dann neu herunter."
 
     set_locale de en
     finish_panel
@@ -793,7 +950,9 @@ download_release() {
 }
 
 latest_backup() {
-    find "$BACKUP_ROOT" -maxdepth 1 -name "panel-$PANEL_VERSION-*.tar.gz" 2>/dev/null | sort | tail -n 1
+    # Neue Backups heißen panel-<ver>-install-<stamp>, ältere (vor Oktober 2026) panel-<ver>-<stamp>
+    find "$BACKUP_ROOT" -maxdepth 1 \( -name "panel-$PANEL_VERSION-install-*.tar.gz" -o -name "panel-$PANEL_VERSION-[0-9]*.tar.gz" \) 2>/dev/null \
+        | sort | tail -n 1
 }
 
 do_uninstall() {
@@ -806,7 +965,7 @@ do_uninstall() {
     # Patch besorgen: gespeicherte Kopie oder frisch herunterladen.
     if [ -f "$INSTALLED_PATCH" ]; then
         PATCH_FILE=$INSTALLED_PATCH
-    elif [ "$VERSION" != canary ] && download_patch; then
+    elif [ "$VERSION" != canary ] && validate_version && download_patch; then
         :
     else
         PATCH_FILE=""
@@ -840,7 +999,7 @@ do_uninstall() {
         send_info "GermanDactyl wird entfernt, indem das Backup $backup_src zurückgespielt wird."
     else
         send_error "GermanDactyl kann nicht automatisch entfernt werden: Weder der Patch noch das Release-Archiv von v$PANEL_VERSION noch ein Backup sind verfügbar.
-  Lade das Panel-Release deiner Version neu herunter (siehe https://pterodactyl.io/panel/1.0/updating.html)."
+  Lade das Panel-Release deiner Version neu herunter (siehe https://docs.pterodactyl.io/docs/panel/updating)."
     fi
 
     countdown "Die Deinstallation"

@@ -1,7 +1,12 @@
 # .github/workflows/verify-patches.yml
-# Prüft, ob alle Patches in der signierten Prüfsummenliste stehen und die
-# Signatur zum Schlüssel in scripts/install.sh passt. Ohne das würde der
-# Installer nach einem Merge jede Installation ablehnen.
+# Zwei Prüfungen:
+#   1. verify:        Alle Patches stehen in der signierten Prüfsummenliste und die Signatur passt zum
+#                     Schlüssel in scripts/install.sh. Ohne das würde der Installer nach einem Merge jede
+#                     Installation ablehnen.
+#   2. patch-upstream: Jeder Patch lässt sich auf das passende Upstream-Release anwenden (git apply --check
+#                     mit denselben Optionen wie install.sh) und die geänderten PHP-Dateien sind syntaktisch
+#                     gültig (php -l). So fällt ein Patch, der nicht mehr zu seiner Panel-Version passt oder
+#                     ein PHP-Skript zerschießt, schon im Pull Request auf – nicht erst bei der Installation.
 name: Patches prüfen
 
 on:
@@ -52,3 +57,79 @@ jobs:
               || { echo "::error file=patches/$patch::$patch fehlt in SHA256SUMS. Signiere mit ./scripts/createPatch.sh --sign"; exit 1; }
           done
           echo "Alle Patches sind signiert und unverändert."
+
+  patch-upstream:
+    name: Patches gegen Upstream prüfen
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: PHP-Version anzeigen
+        run: php --version
+
+      - name: Jeden Patch gegen sein Upstream-Release prüfen
+        run: |
+          set -euo pipefail
+          repo_root=$PWD
+          work=$(mktemp -d)
+          failed=()
+
+          # Dieselben Optionen wie APPLY_OPTS in scripts/install.sh (Whitespace tolerant, nur erlaubte Pfade)
+          apply_opts=(--ignore-whitespace --ignore-space-change)
+          for dir in app resources public database routes config; do
+            apply_opts+=("--include=$dir/*")
+          done
+
+          shopt -s nullglob
+          patches=(patches/v*.patch)
+          if [ ${#patches[@]} -eq 0 ]; then
+            echo "::error::Keine Patches in patches/ gefunden."
+            exit 1
+          fi
+
+          for patch in "${patches[@]}"; do
+            name=$(basename "$patch" .patch)   # z. B. v1.15.1
+            echo "::group::$name"
+            panel="$work/$name"
+            ok=true
+
+            # Das Upstream-Release holen (flacher Klon des Tags)
+            if ! git clone --quiet -c advice.detachedHead=false --depth 1 --branch "$name" https://github.com/pterodactyl/panel.git "$panel"; then
+              echo "::error file=$patch::Tag $name konnte nicht aus pterodactyl/panel geholt werden."
+              ok=false
+            else
+              cd "$panel"
+              # 1. Lässt sich der Patch anwenden?
+              if ! git apply "${apply_opts[@]}" --check "$repo_root/$patch"; then
+                echo "::error file=$patch::$patch lässt sich nicht auf pterodactyl/panel $name anwenden (git apply --check)."
+                ok=false
+              elif ! git apply "${apply_opts[@]}" "$repo_root/$patch"; then
+                echo "::error file=$patch::$patch konnte nicht angewendet werden."
+                ok=false
+              else
+                # 2. Sind alle geänderten PHP-Dateien syntaktisch gültig?
+                count=0
+                while IFS= read -r file; do
+                  [ -f "$file" ] || continue   # vom Patch gelöschte Dateien überspringen
+                  count=$((count + 1))
+                  if ! out=$(php -l "$file" 2>&1); then
+                    echo "$out"
+                    echo "::error file=$patch::PHP-Syntaxfehler in $file ($name)."
+                    ok=false
+                  fi
+                done < <(git apply "${apply_opts[@]}" --numstat "$repo_root/$patch" | cut -f3- | grep -E '\.php$' || true)
+                echo "$count PHP-Dateien mit php -l geprüft."
+              fi
+              cd "$repo_root"
+            fi
+
+            $ok && echo "$name: OK" || failed+=("$name")
+            echo "::endgroup::"
+            rm -rf "$panel"
+          done
+
+          if [ ${#failed[@]} -gt 0 ]; then
+            echo "::error::Fehlgeschlagen: ${failed[*]}"
+            exit 1
+          fi
+          echo "Alle ${#patches[@]} Patches passen auf ihr Upstream-Release."

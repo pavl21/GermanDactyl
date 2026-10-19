@@ -1624,7 +1624,7 @@ index 0000000..c385d14
 +}
 diff --git a/resources/lang/de/activity.php b/resources/lang/de/activity.php
 new file mode 100644
-index 0000000..b4def9e
+index 0000000..314520c
 --- /dev/null
 +++ b/resources/lang/de/activity.php
 @@ -0,0 +1,133 @@
@@ -1680,7 +1680,7 @@ index 0000000..b4def9e
 +            'start' => 'Server gestartet',
 +            'stop' => 'Server gestoppt',
 +            'restart' => 'Server neu gestartet',
-+            'kill' => 'Serverprozess erzwungen gestoppt',
++            'kill' => 'Serverprozess zwangsweise beendet',
 +        ],
 +        'backup' => [
 +            'download' => 'Backup :name heruntergeladen',
@@ -1902,7 +1902,7 @@ index 0000000..7e5c8d1
 +];
 diff --git a/resources/lang/de/command/messages.php b/resources/lang/de/command/messages.php
 new file mode 100644
-index 0000000..ee9bcb4
+index 0000000..d405ab0
 --- /dev/null
 +++ b/resources/lang/de/command/messages.php
 @@ -0,0 +1,66 @@
@@ -1910,8 +1910,8 @@ index 0000000..ee9bcb4
 +
 +return [
 +    'location' => [
-+        'no_location_found' => 'Es wurde kein Eintrag mit dem angegebenen Kurzcode gefunden.',
-+        'ask_short' => 'Kurzcode des Standorts',
++        'no_location_found' => 'Es wurde kein Eintrag mit dem angegebenen Kürzel gefunden.',
++        'ask_short' => 'Kürzel des Standorts',
 +        'ask_long' => 'Beschreibung des Standorts',
 +        'created' => 'Der neue Standort (:name) wurde erfolgreich mit der ID :id erstellt.',
 +        'deleted' => 'Der Standort wurde erfolgreich gelöscht.',
@@ -2142,7 +2142,7 @@ index 0000000..a743f3e
 +];
 diff --git a/resources/lang/de/server/users.php b/resources/lang/de/server/users.php
 new file mode 100644
-index 0000000..7f6ca55
+index 0000000..392a926
 --- /dev/null
 +++ b/resources/lang/de/server/users.php
 @@ -0,0 +1,33 @@
@@ -2155,7 +2155,7 @@ index 0000000..7f6ca55
 +        'control_start' => 'Erlaubt dem Benutzer, den Server zu starten.',
 +        'control_stop' => 'Erlaubt dem Benutzer, den Server zu stoppen.',
 +        'control_restart' => 'Erlaubt dem Benutzer, den Server neu zu starten.',
-+        'control_kill' => 'Erlaubt dem Benutzer, den Server erzwungen zu stoppen.',
++        'control_kill' => 'Erlaubt dem Benutzer, den Server zwangsweise zu beenden.',
 +        'user_create' => 'Erlaubt dem Benutzer, neue Benutzerkonten für den Server zu erstellen.',
 +        'user_read' => 'Erlaubt dem Benutzer, die Benutzer dieses Servers anzusehen.',
 +        'user_update' => 'Erlaubt dem Benutzer, andere Benutzer dieses Servers zu bearbeiten.',
@@ -2181,7 +2181,7 @@ index 0000000..7f6ca55
 +];
 diff --git a/resources/lang/de/strings.php b/resources/lang/de/strings.php
 new file mode 100644
-index 0000000..ecbf0a1
+index 0000000..ca0f04c
 --- /dev/null
 +++ b/resources/lang/de/strings.php
 @@ -0,0 +1,95 @@
@@ -2219,7 +2219,7 @@ index 0000000..ecbf0a1
 +    'configuration' => 'Konfiguration',
 +    'sftp' => 'SFTP',
 +    'databases' => 'Datenbanken',
-+    'memo' => 'Notiz',
++    'memo' => 'Beschreibung',
 +    'created' => 'Erstellt',
 +    'expires' => 'Läuft ab',
 +    'public_key' => 'Token',
@@ -2282,7 +2282,7 @@ index 0000000..ecbf0a1
 +];
 diff --git a/resources/lang/de/validation.php b/resources/lang/de/validation.php
 new file mode 100644
-index 0000000..7812dfa
+index 0000000..8e336d4
 --- /dev/null
 +++ b/resources/lang/de/validation.php
 @@ -0,0 +1,221 @@
@@ -2300,153 +2300,153 @@ index 0000000..7812dfa
 +    |
 +    */
 +
-+    'accepted' => ':attribute muss akzeptiert werden.',
-+    'accepted_if' => ':attribute muss akzeptiert werden, wenn :other :value ist.',
-+    'active_url' => ':attribute ist keine gültige URL.',
-+    'after' => ':attribute muss ein Datum nach :date sein.',
-+    'after_or_equal' => ':attribute muss ein Datum nach oder gleich :date sein.',
-+    'alpha' => ':attribute darf nur Buchstaben enthalten.',
-+    'alpha_dash' => ':attribute darf nur Buchstaben, Zahlen, Binde- und Unterstriche enthalten.',
-+    'alpha_num' => ':attribute darf nur Buchstaben und Zahlen enthalten.',
-+    'array' => ':attribute muss ein Array sein.',
-+    'ascii' => ':attribute darf nur alphanumerische Einzelbyte-Zeichen und Symbole enthalten.',
-+    'before' => ':attribute muss ein Datum vor :date sein.',
-+    'before_or_equal' => ':attribute muss ein Datum vor oder gleich :date sein.',
++    'accepted' => ':Attribute muss akzeptiert werden.',
++    'accepted_if' => ':Attribute muss akzeptiert werden, wenn :other :value ist.',
++    'active_url' => ':Attribute ist keine gültige URL.',
++    'after' => ':Attribute muss ein Datum nach :date sein.',
++    'after_or_equal' => ':Attribute muss ein Datum nach oder gleich :date sein.',
++    'alpha' => ':Attribute darf nur Buchstaben enthalten.',
++    'alpha_dash' => ':Attribute darf nur Buchstaben, Zahlen, Binde- und Unterstriche enthalten.',
++    'alpha_num' => ':Attribute darf nur Buchstaben und Zahlen enthalten.',
++    'array' => ':Attribute muss ein Array sein.',
++    'ascii' => ':Attribute darf nur alphanumerische Einzelbyte-Zeichen und Symbole enthalten.',
++    'before' => ':Attribute muss ein Datum vor :date sein.',
++    'before_or_equal' => ':Attribute muss ein Datum vor oder gleich :date sein.',
 +    'between' => [
-+        'numeric' => ':attribute muss zwischen :min und :max liegen.',
-+        'file' => ':attribute muss zwischen :min und :max Kilobyte groß sein.',
-+        'string' => ':attribute muss zwischen :min und :max Zeichen lang sein.',
-+        'array' => ':attribute muss zwischen :min und :max Elemente haben.',
++        'numeric' => ':Attribute muss zwischen :min und :max liegen.',
++        'file' => ':Attribute muss zwischen :min und :max Kilobyte groß sein.',
++        'string' => ':Attribute muss zwischen :min und :max Zeichen lang sein.',
++        'array' => ':Attribute muss zwischen :min und :max Elemente haben.',
 +    ],
-+    'boolean' => ':attribute muss wahr oder falsch sein.',
-+    'can' => ':attribute enthält einen nicht erlaubten Wert.',
++    'boolean' => ':Attribute muss wahr oder falsch sein.',
++    'can' => ':Attribute enthält einen nicht erlaubten Wert.',
 +    'confirmed' => 'Die Bestätigung von :attribute stimmt nicht überein.',
 +    'contains' => 'In :attribute fehlt ein erforderlicher Wert.',
 +    'current_password' => 'Das Passwort ist falsch.',
-+    'date' => ':attribute ist kein gültiges Datum.',
-+    'date_equals' => ':attribute muss ein Datum gleich :date sein.',
-+    'date_format' => ':attribute entspricht nicht dem Format :format.',
-+    'decimal' => ':attribute muss :decimal Nachkommastellen haben.',
-+    'declined' => ':attribute muss abgelehnt werden.',
-+    'declined_if' => ':attribute muss abgelehnt werden, wenn :other :value ist.',
-+    'different' => ':attribute und :other müssen sich unterscheiden.',
-+    'digits' => ':attribute muss :digits Ziffern haben.',
-+    'digits_between' => ':attribute muss zwischen :min und :max Ziffern haben.',
-+    'dimensions' => ':attribute hat ungültige Bildabmessungen.',
-+    'distinct' => ':attribute enthält einen doppelten Wert.',
-+    'doesnt_end_with' => ':attribute darf nicht mit einem der folgenden Werte enden: :values.',
-+    'doesnt_start_with' => ':attribute darf nicht mit einem der folgenden Werte beginnen: :values.',
-+    'email' => ':attribute muss eine gültige E-Mail-Adresse sein.',
-+    'ends_with' => ':attribute muss mit einem der folgenden Werte enden: :values.',
++    'date' => ':Attribute ist kein gültiges Datum.',
++    'date_equals' => ':Attribute muss ein Datum gleich :date sein.',
++    'date_format' => ':Attribute entspricht nicht dem Format :format.',
++    'decimal' => ':Attribute muss :decimal Nachkommastellen haben.',
++    'declined' => ':Attribute muss abgelehnt werden.',
++    'declined_if' => ':Attribute muss abgelehnt werden, wenn :other :value ist.',
++    'different' => ':Attribute und :other müssen sich unterscheiden.',
++    'digits' => ':Attribute muss :digits Ziffern haben.',
++    'digits_between' => ':Attribute muss zwischen :min und :max Ziffern haben.',
++    'dimensions' => ':Attribute hat ungültige Bildabmessungen.',
++    'distinct' => ':Attribute enthält einen doppelten Wert.',
++    'doesnt_end_with' => ':Attribute darf nicht mit einem der folgenden Werte enden: :values.',
++    'doesnt_start_with' => ':Attribute darf nicht mit einem der folgenden Werte beginnen: :values.',
++    'email' => ':Attribute muss eine gültige E-Mail-Adresse sein.',
++    'ends_with' => ':Attribute muss mit einem der folgenden Werte enden: :values.',
 +    'enum' => 'Der gewählte Wert für :attribute ist ungültig.',
 +    'exists' => 'Der gewählte Wert für :attribute ist ungültig.',
-+    'extensions' => ':attribute muss eine der folgenden Dateiendungen haben: :values.',
-+    'file' => ':attribute muss eine Datei sein.',
-+    'filled' => ':attribute ist erforderlich.',
++    'extensions' => ':Attribute muss eine der folgenden Dateiendungen haben: :values.',
++    'file' => ':Attribute muss eine Datei sein.',
++    'filled' => ':Attribute ist erforderlich.',
 +    'gt' => [
-+        'array' => ':attribute muss mehr als :value Elemente haben.',
-+        'file' => ':attribute muss größer als :value Kilobyte sein.',
-+        'numeric' => ':attribute muss größer als :value sein.',
-+        'string' => ':attribute muss länger als :value Zeichen sein.',
++        'array' => ':Attribute muss mehr als :value Elemente haben.',
++        'file' => ':Attribute muss größer als :value Kilobyte sein.',
++        'numeric' => ':Attribute muss größer als :value sein.',
++        'string' => ':Attribute muss länger als :value Zeichen sein.',
 +    ],
 +    'gte' => [
-+        'array' => ':attribute muss mindestens :value Elemente haben.',
-+        'file' => ':attribute muss größer oder gleich :value Kilobyte sein.',
-+        'numeric' => ':attribute muss größer oder gleich :value sein.',
-+        'string' => ':attribute muss mindestens :value Zeichen lang sein.',
++        'array' => ':Attribute muss mindestens :value Elemente haben.',
++        'file' => ':Attribute muss größer oder gleich :value Kilobyte sein.',
++        'numeric' => ':Attribute muss größer oder gleich :value sein.',
++        'string' => ':Attribute muss mindestens :value Zeichen lang sein.',
 +    ],
-+    'hex_color' => ':attribute muss eine gültige Hexadezimalfarbe sein.',
-+    'image' => ':attribute muss ein Bild sein.',
++    'hex_color' => ':Attribute muss eine gültige Hexadezimalfarbe sein.',
++    'image' => ':Attribute muss ein Bild sein.',
 +    'in' => 'Der gewählte Wert für :attribute ist ungültig.',
 +    'in_array' => 'Der Wert von :attribute kommt in :other nicht vor.',
-+    'integer' => ':attribute muss eine ganze Zahl sein.',
-+    'ip' => ':attribute muss eine gültige IP-Adresse sein.',
-+    'ipv4' => ':attribute muss eine gültige IPv4-Adresse sein.',
-+    'ipv6' => ':attribute muss eine gültige IPv6-Adresse sein.',
-+    'json' => ':attribute muss ein gültiger JSON-String sein.',
-+    'list' => ':attribute muss eine Liste sein.',
-+    'lowercase' => ':attribute darf nur Kleinbuchstaben enthalten.',
++    'integer' => ':Attribute muss eine ganze Zahl sein.',
++    'ip' => ':Attribute muss eine gültige IP-Adresse sein.',
++    'ipv4' => ':Attribute muss eine gültige IPv4-Adresse sein.',
++    'ipv6' => ':Attribute muss eine gültige IPv6-Adresse sein.',
++    'json' => ':Attribute muss ein gültiger JSON-String sein.',
++    'list' => ':Attribute muss eine Liste sein.',
++    'lowercase' => ':Attribute darf nur Kleinbuchstaben enthalten.',
 +    'lt' => [
-+        'array' => ':attribute muss weniger als :value Elemente haben.',
-+        'file' => ':attribute muss kleiner als :value Kilobyte sein.',
-+        'numeric' => ':attribute muss kleiner als :value sein.',
-+        'string' => ':attribute muss kürzer als :value Zeichen sein.',
++        'array' => ':Attribute muss weniger als :value Elemente haben.',
++        'file' => ':Attribute muss kleiner als :value Kilobyte sein.',
++        'numeric' => ':Attribute muss kleiner als :value sein.',
++        'string' => ':Attribute muss kürzer als :value Zeichen sein.',
 +    ],
 +    'lte' => [
-+        'array' => ':attribute darf nicht mehr als :value Elemente haben.',
-+        'file' => ':attribute muss kleiner oder gleich :value Kilobyte sein.',
-+        'numeric' => ':attribute muss kleiner oder gleich :value sein.',
-+        'string' => ':attribute darf höchstens :value Zeichen lang sein.',
++        'array' => ':Attribute darf nicht mehr als :value Elemente haben.',
++        'file' => ':Attribute muss kleiner oder gleich :value Kilobyte sein.',
++        'numeric' => ':Attribute muss kleiner oder gleich :value sein.',
++        'string' => ':Attribute darf höchstens :value Zeichen lang sein.',
 +    ],
-+    'mac_address' => ':attribute muss eine gültige MAC-Adresse sein.',
++    'mac_address' => ':Attribute muss eine gültige MAC-Adresse sein.',
 +    'max' => [
-+        'numeric' => ':attribute darf nicht größer als :max sein.',
-+        'file' => ':attribute darf nicht größer als :max Kilobyte sein.',
-+        'string' => ':attribute darf nicht länger als :max Zeichen sein.',
-+        'array' => ':attribute darf nicht mehr als :max Elemente haben.',
++        'numeric' => ':Attribute darf nicht größer als :max sein.',
++        'file' => ':Attribute darf nicht größer als :max Kilobyte sein.',
++        'string' => ':Attribute darf nicht länger als :max Zeichen sein.',
++        'array' => ':Attribute darf nicht mehr als :max Elemente haben.',
 +    ],
-+    'max_digits' => ':attribute darf nicht mehr als :max Ziffern haben.',
-+    'mimes' => ':attribute muss eine Datei vom Typ :values sein.',
-+    'mimetypes' => ':attribute muss eine Datei vom Typ :values sein.',
++    'max_digits' => ':Attribute darf nicht mehr als :max Ziffern haben.',
++    'mimes' => ':Attribute muss eine Datei vom Typ :values sein.',
++    'mimetypes' => ':Attribute muss eine Datei vom Typ :values sein.',
 +    'min' => [
-+        'numeric' => ':attribute muss mindestens :min sein.',
-+        'file' => ':attribute muss mindestens :min Kilobyte groß sein.',
-+        'string' => ':attribute muss mindestens :min Zeichen lang sein.',
-+        'array' => ':attribute muss mindestens :min Elemente haben.',
++        'numeric' => ':Attribute muss mindestens :min sein.',
++        'file' => ':Attribute muss mindestens :min Kilobyte groß sein.',
++        'string' => ':Attribute muss mindestens :min Zeichen lang sein.',
++        'array' => ':Attribute muss mindestens :min Elemente haben.',
 +    ],
-+    'min_digits' => ':attribute muss mindestens :min Ziffern haben.',
-+    'missing' => ':attribute darf nicht vorhanden sein.',
-+    'missing_if' => ':attribute darf nicht vorhanden sein, wenn :other :value ist.',
-+    'missing_unless' => ':attribute darf nicht vorhanden sein, außer :other ist :value.',
-+    'missing_with' => ':attribute darf nicht vorhanden sein, wenn :values vorhanden ist.',
-+    'missing_with_all' => ':attribute darf nicht vorhanden sein, wenn :values vorhanden sind.',
-+    'multiple_of' => ':attribute muss ein Vielfaches von :value sein.',
++    'min_digits' => ':Attribute muss mindestens :min Ziffern haben.',
++    'missing' => ':Attribute darf nicht vorhanden sein.',
++    'missing_if' => ':Attribute darf nicht vorhanden sein, wenn :other :value ist.',
++    'missing_unless' => ':Attribute darf nicht vorhanden sein, außer :other ist :value.',
++    'missing_with' => ':Attribute darf nicht vorhanden sein, wenn :values vorhanden ist.',
++    'missing_with_all' => ':Attribute darf nicht vorhanden sein, wenn :values vorhanden sind.',
++    'multiple_of' => ':Attribute muss ein Vielfaches von :value sein.',
 +    'not_in' => 'Der gewählte Wert für :attribute ist ungültig.',
 +    'not_regex' => 'Das Format von :attribute ist ungültig.',
-+    'numeric' => ':attribute muss eine Zahl sein.',
++    'numeric' => ':Attribute muss eine Zahl sein.',
 +    'password' => [
-+        'letters' => ':attribute muss mindestens einen Buchstaben enthalten.',
-+        'mixed' => ':attribute muss mindestens einen Groß- und einen Kleinbuchstaben enthalten.',
-+        'numbers' => ':attribute muss mindestens eine Zahl enthalten.',
-+        'symbols' => ':attribute muss mindestens ein Sonderzeichen enthalten.',
-+        'uncompromised' => ':attribute ist in einem Datenleck aufgetaucht. Bitte wähle einen anderen Wert für :attribute.',
++        'letters' => ':Attribute muss mindestens einen Buchstaben enthalten.',
++        'mixed' => ':Attribute muss mindestens einen Groß- und einen Kleinbuchstaben enthalten.',
++        'numbers' => ':Attribute muss mindestens eine Zahl enthalten.',
++        'symbols' => ':Attribute muss mindestens ein Sonderzeichen enthalten.',
++        'uncompromised' => ':Attribute ist in einem Datenleck aufgetaucht. Bitte wähle einen anderen Wert für :attribute.',
 +    ],
-+    'present' => ':attribute muss vorhanden sein.',
-+    'present_if' => ':attribute muss vorhanden sein, wenn :other :value ist.',
-+    'present_unless' => ':attribute muss vorhanden sein, außer :other ist :value.',
-+    'present_with' => ':attribute muss vorhanden sein, wenn :values vorhanden ist.',
-+    'present_with_all' => ':attribute muss vorhanden sein, wenn :values vorhanden sind.',
-+    'prohibited' => ':attribute ist nicht erlaubt.',
-+    'prohibited_if' => ':attribute ist nicht erlaubt, wenn :other :value ist.',
-+    'prohibited_unless' => ':attribute ist nicht erlaubt, außer :other ist in :values enthalten.',
-+    'prohibits' => ':attribute verbietet die Angabe von :other.',
++    'present' => ':Attribute muss vorhanden sein.',
++    'present_if' => ':Attribute muss vorhanden sein, wenn :other :value ist.',
++    'present_unless' => ':Attribute muss vorhanden sein, außer :other ist :value.',
++    'present_with' => ':Attribute muss vorhanden sein, wenn :values vorhanden ist.',
++    'present_with_all' => ':Attribute muss vorhanden sein, wenn :values vorhanden sind.',
++    'prohibited' => ':Attribute ist nicht erlaubt.',
++    'prohibited_if' => ':Attribute ist nicht erlaubt, wenn :other :value ist.',
++    'prohibited_unless' => ':Attribute ist nicht erlaubt, außer :other ist in :values enthalten.',
++    'prohibits' => ':Attribute verbietet die Angabe von :other.',
 +    'regex' => 'Das Format von :attribute ist ungültig.',
-+    'required' => ':attribute ist erforderlich.',
-+    'required_array_keys' => ':attribute muss Einträge für folgende Werte enthalten: :values.',
-+    'required_if' => ':attribute ist erforderlich, wenn :other :value ist.',
-+    'required_if_accepted' => ':attribute ist erforderlich, wenn :other akzeptiert wurde.',
-+    'required_if_declined' => ':attribute ist erforderlich, wenn :other abgelehnt wurde.',
-+    'required_unless' => ':attribute ist erforderlich, außer :other ist in :values enthalten.',
-+    'required_with' => ':attribute ist erforderlich, wenn :values vorhanden ist.',
-+    'required_with_all' => ':attribute ist erforderlich, wenn :values vorhanden sind.',
-+    'required_without' => ':attribute ist erforderlich, wenn :values nicht vorhanden ist.',
-+    'required_without_all' => ':attribute ist erforderlich, wenn keiner der Werte :values vorhanden ist.',
-+    'same' => ':attribute und :other müssen übereinstimmen.',
++    'required' => ':Attribute ist erforderlich.',
++    'required_array_keys' => ':Attribute muss Einträge für folgende Werte enthalten: :values.',
++    'required_if' => ':Attribute ist erforderlich, wenn :other :value ist.',
++    'required_if_accepted' => ':Attribute ist erforderlich, wenn :other akzeptiert wurde.',
++    'required_if_declined' => ':Attribute ist erforderlich, wenn :other abgelehnt wurde.',
++    'required_unless' => ':Attribute ist erforderlich, außer :other ist in :values enthalten.',
++    'required_with' => ':Attribute ist erforderlich, wenn :values vorhanden ist.',
++    'required_with_all' => ':Attribute ist erforderlich, wenn :values vorhanden sind.',
++    'required_without' => ':Attribute ist erforderlich, wenn :values nicht vorhanden ist.',
++    'required_without_all' => ':Attribute ist erforderlich, wenn keiner der Werte :values vorhanden ist.',
++    'same' => ':Attribute und :other müssen übereinstimmen.',
 +    'size' => [
-+        'numeric' => ':attribute muss gleich :size sein.',
-+        'file' => ':attribute muss :size Kilobyte groß sein.',
-+        'string' => ':attribute muss :size Zeichen lang sein.',
-+        'array' => ':attribute muss :size Elemente enthalten.',
++        'numeric' => ':Attribute muss gleich :size sein.',
++        'file' => ':Attribute muss :size Kilobyte groß sein.',
++        'string' => ':Attribute muss :size Zeichen lang sein.',
++        'array' => ':Attribute muss :size Elemente enthalten.',
 +    ],
-+    'starts_with' => ':attribute muss mit einem der folgenden Werte beginnen: :values.',
-+    'string' => ':attribute muss eine Zeichenkette sein.',
-+    'timezone' => ':attribute muss eine gültige Zeitzone sein.',
-+    'ulid' => ':attribute muss eine gültige ULID sein.',
-+    'unique' => ':attribute ist bereits vergeben.',
-+    'uploaded' => ':attribute konnte nicht hochgeladen werden.',
-+    'uppercase' => ':attribute darf nur Großbuchstaben enthalten.',
++    'starts_with' => ':Attribute muss mit einem der folgenden Werte beginnen: :values.',
++    'string' => ':Attribute muss eine Zeichenkette sein.',
++    'timezone' => ':Attribute muss eine gültige Zeitzone sein.',
++    'ulid' => ':Attribute muss eine gültige ULID sein.',
++    'unique' => ':Attribute ist bereits vergeben.',
++    'uploaded' => ':Attribute konnte nicht hochgeladen werden.',
++    'uppercase' => ':Attribute darf nur Großbuchstaben enthalten.',
 +    'url' => 'Das Format von :attribute ist ungültig.',
-+    'uuid' => ':attribute muss eine gültige UUID sein.',
++    'uuid' => ':Attribute muss eine gültige UUID sein.',
 +
 +    /*
 +    |--------------------------------------------------------------------------
@@ -2490,7 +2490,7 @@ index 0000000..7812dfa
 +        'database_limit' => 'Datenbank-Limit',
 +        'backup_limit' => 'Backup-Limit',
 +        'fqdn' => 'FQDN',
-+        'short' => 'Kurzcode',
++        'short' => 'Kürzel',
 +        'long' => 'Beschreibung',
 +        'ip' => 'IP-Adresse',
 +        'ip_alias' => 'IP-Alias',
@@ -4150,7 +4150,7 @@ index 25f0743..6cdc3f2 100644
                          onKeyDown={handleCommandKeyDown}
                          autoCorrect={'off'}
 diff --git a/resources/scripts/components/server/console/PowerButtons.tsx b/resources/scripts/components/server/console/PowerButtons.tsx
-index f5f8189..c8402cf 100644
+index f5f8189..a8d4f17 100644
 --- a/resources/scripts/components/server/console/PowerButtons.tsx
 +++ b/resources/scripts/components/server/console/PowerButtons.tsx
 @@ -42,11 +42,11 @@ export default ({ className }: PowerButtonProps) => {
@@ -4159,12 +4159,12 @@ index f5f8189..c8402cf 100644
                  onClose={() => setOpen(false)}
 -                title={'Forcibly Stop Process'}
 -                confirm={'Continue'}
-+                title={'Prozess erzwungen stoppen'}
++                title={'Prozess zwangsweise beenden'}
 +                confirm={'Fortfahren'}
                  onConfirmed={onButtonClick.bind(this, 'kill-confirmed')}
              >
 -                Forcibly stopping a server can lead to data corruption.
-+                Das erzwungene Stoppen eines Servers kann zu beschädigten Daten führen.
++                Das zwangsweise Beenden eines Servers kann zu beschädigten Daten führen.
              </Dialog.Confirm>
              <Can action={'control.start'}>
                  <Button
@@ -5771,7 +5771,7 @@ index f950b94..aa7c046 100644
                          onClick={() => setVisible(true)}
                      >
 diff --git a/resources/scripts/components/server/schedules/TaskDetailsModal.tsx b/resources/scripts/components/server/schedules/TaskDetailsModal.tsx
-index f54c0a2..3abadb4 100644
+index f54c0a2..659b2a7 100644
 --- a/resources/scripts/components/server/schedules/TaskDetailsModal.tsx
 +++ b/resources/scripts/components/server/schedules/TaskDetailsModal.tsx
 @@ -36,15 +36,15 @@ const schema = object().shape({
@@ -5791,7 +5791,7 @@ index f54c0a2..3abadb4 100644
 +        .typeError('Die Zeitverzögerung muss eine gültige Zahl zwischen 0 und 900 sein.')
 +        .required('Es muss eine Zeitverzögerung angegeben werden.')
 +        .min(0, 'Die Zeitverzögerung muss mindestens 0 Sekunden betragen.')
-+        .max(900, 'Die Zeitverzögerung muss weniger als 900 Sekunden betragen.'),
++        .max(900, 'Die Zeitverzögerung darf höchstens 900 Sekunden betragen.'),
  });
  
  const ActionListener = () => {
@@ -5861,7 +5861,7 @@ index f54c0a2..3abadb4 100644
 +                                        <option value={'start'}>Server starten</option>
 +                                        <option value={'restart'}>Server neu starten</option>
 +                                        <option value={'stop'}>Server stoppen</option>
-+                                        <option value={'kill'}>Server erzwungen stoppen</option>
++                                        <option value={'kill'}>Server zwangsweise beenden</option>
                                      </FormikField>
                                  </FormikFieldWrapper>
                              </div>
@@ -6429,7 +6429,7 @@ index 088aca2..caac16e 100644
                      message: httpErrorToHuman(payload.error),
                  },
 diff --git a/resources/views/admin/api/index.blade.php b/resources/views/admin/api/index.blade.php
-index d863c57..22fd638 100644
+index d863c57..5ba9b30 100644
 --- a/resources/views/admin/api/index.blade.php
 +++ b/resources/views/admin/api/index.blade.php
 @@ -1,14 +1,14 @@
@@ -6469,7 +6469,7 @@ index d863c57..22fd638 100644
 -                            <th>Last Used</th>
 -                            <th>Created</th>
 +                            <th>API-Schlüssel</th>
-+                            <th>Notiz</th>
++                            <th>Beschreibung</th>
 +                            <th>Zuletzt genutzt</th>
 +                            <th>Erstellt</th>
                              <th></th>
@@ -10132,7 +10132,7 @@ index 385ce0f..42a7420 100644
              });
          }).always(function () {
 diff --git a/resources/views/admin/servers/view/delete.blade.php b/resources/views/admin/servers/view/delete.blade.php
-index c237096..f4b1ef5 100644
+index c237096..42176d9 100644
 --- a/resources/views/admin/servers/view/delete.blade.php
 +++ b/resources/views/admin/servers/view/delete.blade.php
 @@ -1,16 +1,16 @@
@@ -10182,7 +10182,7 @@ index c237096..f4b1ef5 100644
          <div class="box box-danger">
              <div class="box-header with-border">
 -                <h3 class="box-title">Force Delete Server</h3>
-+                <h3 class="box-title">Server erzwungen löschen</h3>
++                <h3 class="box-title">Server zwangsweise löschen</h3>
              </div>
              <div class="box-body">
 -                <p>This action will attempt to delete the server from both the panel and daemon. If the daemon does not respond, or reports an error the deletion will continue.</p>
@@ -10195,7 +10195,7 @@ index c237096..f4b1ef5 100644
                      {!! csrf_field() !!}
                      <input type="hidden" name="force_delete" value="1" />
 -                    <button id="forcedeletebtn"" class="btn btn-danger">Forcibly Delete This Server</button>
-+                    <button id="forcedeletebtn" class="btn btn-danger">Diesen Server erzwungen löschen</button>
++                    <button id="forcedeletebtn" class="btn btn-danger">Diesen Server zwangsweise löschen</button>
                  </form>
              </div>
          </div>
