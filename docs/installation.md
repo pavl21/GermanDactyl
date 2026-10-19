@@ -6,8 +6,8 @@
 
 ## Voraussetzungen
 
-- Pterodactyl Panel, installiert nach der [offiziellen Anleitung](https://pterodactyl.io/panel/1.0/getting_started.html) (Release-Tarball)
-- Ubuntu 22.04/24.04 oder Debian 11/12/13
+- Pterodactyl Panel, installiert nach der [offiziellen Anleitung](https://docs.pterodactyl.io/docs/panel/getting-started) (Release-Tarball)
+- Ubuntu 22.04/24.04/26.04 oder Debian 11/12/13
 - PHP 8.2 oder 8.3
 - Node.js ≥ 22 (wird bei Bedarf automatisch installiert)
 - Mindestens 2 GB RAM (oder entsprechend Swap) für den Build
@@ -35,17 +35,17 @@ Füge den folgenden Befehl in die Konsole deines Servers ein. GermanDactyl insta
 
 === ":material-flash: Normale Installation"
     ```shell
-    curl -sSL https://install.germandactyl.de/ | sudo bash -s --
+    curl -fsSL https://install.germandactyl.de/ | sudo bash -s --
     ```
 
 === ":material-folder: Ordner auswählen"
     ```shell
-    curl -sSL https://install.germandactyl.de/ | sudo bash -s -- -d /var/www/pterodactyl -y
+    curl -fsSL https://install.germandactyl.de/ | sudo bash -s -- -d /var/www/pterodactyl -y
     ```
 
 === ":material-update: Version erzwingen"
     ```shell
-    curl -sSL https://install.germandactyl.de/ | sudo bash -s -- -v 1.15.1
+    curl -fsSL https://install.germandactyl.de/ | sudo bash -s -- -v 1.15.1
     ```
     !!! warning "Auf eigenes Risiko"
         Nutze `-v` nur, wenn die vom Panel gemeldete Version nicht stimmt (z. B. `canary`). Ein Patch für eine andere

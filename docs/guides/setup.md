@@ -4,7 +4,7 @@ Wir möchten mehr als eine Übersetzung bieten und haben uns die Mühe gemacht, 
 Mit diesem Skript setzt du kinderleicht ein Pterodactyl Panel auf. Du brauchst dafür nur einen Linux-Server und eine eigene Domain.
 
 !!! info "Voraussetzungen"
-    - Ubuntu 22.04/24.04 oder Debian 11/12/13 (RHEL, Rocky und Alma werden nicht unterstützt)
+    - Ubuntu 22.04, 24.04 oder 26.04 bzw. Debian 12 oder 13 (RHEL, Rocky und Alma werden nicht unterstützt)
     - Genügend Speicherplatz (ca. 1 GB für Panel und Wings)
     - Ein frisch aufgesetztes System, auf dem Port 80 nicht belegt ist
 
@@ -17,7 +17,7 @@ Mit diesem Skript setzt du kinderleicht ein Pterodactyl Panel auf. Du brauchst d
 Mit diesem Befehl startest du das Skript:
 
 ```shell
-sudo bash -c "$(curl -sSL https://setup.germandactyl.de/)"
+sudo bash -c "$(curl -fsSL https://setup.germandactyl.de/)"
 ```
 
 

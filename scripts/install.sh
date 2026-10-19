@@ -71,11 +71,13 @@ INSTALLED_PATCH="" # Kopie des installierten Patches (für -u)
 LOG=""
 STAMP=$(date +%Y%m%d-%H%M%S)
 BACKUP_FILE=""
+BACKUP_DONE=0
 PATCH_FILE=""
 TMP_DIR=""
 MAINTENANCE=0
 ROLLBACK_NEEDED=0
 CREATED_FILES=()
+STALE_FILES=()    # Vom Patch neu angelegte Dateien, die schon existieren
 USE_APT=0
 
 # ---------------------------------------------------------------------------
@@ -577,6 +579,7 @@ create_backup() {
     send_info "Backup wird erstellt: $BACKUP_FILE"
     run_logged tar -czf "$BACKUP_FILE" -C "$PTERODACTYL_PATH" "${dirs[@]}" \
         || send_error "Das Backup konnte nicht erstellt werden (genug Speicherplatz frei?)."
+    BACKUP_DONE=1
     send_success "Backup erstellt."
 }
 
@@ -699,8 +702,62 @@ countdown() {
     sleep 10
 }
 
+# Prüft, ob "git apply --check" (Log in $1) nur deshalb scheitert, weil vom Patch
+# neu anzulegende Dateien schon existieren (Reste einer früheren Übersetzung,
+# z. B. nach einem Panel-Update per Tarball). Die Pfade landen in STALE_FILES.
+# Gibt 1 zurück, wenn es andere Fehler gibt oder ein Pfad unzulässig ist.
+find_stale_files() {
+    local line file created found root real
+    STALE_FILES=()
+
+    while IFS= read -r line; do
+        case "$line" in
+            error:*) ;;
+            *) continue ;;
+        esac
+        if [[ $line =~ ^error:\ (.+):\ already\ exists\ in\ working\ directory$ ]]; then
+            file=${BASH_REMATCH[1]}
+        else
+            return 1
+        fi
+        found=0
+        for created in "${CREATED_FILES[@]}"; do
+            if [ "$created" = "$file" ]; then
+                found=1
+                break
+            fi
+        done
+        [ "$found" = 1 ] || return 1
+        STALE_FILES+=("$file")
+    done <"$1"
+    [ "${#STALE_FILES[@]}" -gt 0 ] || return 1
+
+    # Nur Pfade innerhalb des Panels und der erlaubten Ordner, keine Symlinks.
+    root=$(realpath -e -- "$PTERODACTYL_PATH") || return 1
+    for file in "${STALE_FILES[@]}"; do
+        printf '%s\n' "$file" | grep -Eq "$ALLOWED_PATCH_PATHS" || return 1
+        if printf '%s\n' "$file" | grep -Eq '(^|/)\.\.(/|$)|^/'; then
+            return 1
+        fi
+        [ -f "$PTERODACTYL_PATH/$file" ] && [ ! -L "$PTERODACTYL_PATH/$file" ] || return 1
+        real=$(realpath -e -- "$PTERODACTYL_PATH/$file") || return 1
+        [ "$real" = "$root/$file" ] || return 1
+    done
+}
+
+# Löscht die Dateien aus STALE_FILES und danach leer gewordene Ordner.
+remove_stale_files() {
+    local file
+    for file in "${STALE_FILES[@]}"; do
+        rm -f -- "$PTERODACTYL_PATH/$file"
+    done
+    for file in "${STALE_FILES[@]}"; do
+        (cd "$PTERODACTYL_PATH" && rmdir -p --ignore-fail-on-non-empty -- "$(dirname "$file")") 2>/dev/null || true
+    done
+}
+
 apply_patch() {
-    local check_log="$TMP_DIR/check.log" use_reject=0
+    local check_log="$TMP_DIR/check.log" use_reject=0 check_ok=1
 
     if git apply "${APPLY_OPTS[@]}" --reverse --check "$PATCH_FILE" >/dev/null 2>&1; then
         send_success "GermanDactyl ist für v$VERSION bereits installiert. Es gibt nichts zu tun."
@@ -709,7 +766,30 @@ apply_patch() {
     fi
 
     if ! git apply "${APPLY_OPTS[@]}" --check "$PATCH_FILE" >"$check_log" 2>&1; then
+        check_ok=0
         cat "$check_log" >>"$LOG"
+
+        # Reste einer früheren Übersetzung (z. B. nach einem Panel-Update) ersetzen.
+        if find_stale_files "$check_log"; then
+            send_info "Reste einer früheren Übersetzung gefunden (z. B. nach einem Panel-Update) – sie werden durch die neue Version ersetzt."
+            # Das Backup muss vor dem Löschen laufen. Scheitert danach etwas,
+            # wird es über den Rollback wieder zurückgespielt.
+            if [ "$BACKUP_DONE" != 1 ]; then
+                create_backup
+            fi
+            ROLLBACK_NEEDED=1
+            printf -- '--- alte Übersetzung entfernen ---\n' >>"$LOG"
+            printf '%s\n' "${STALE_FILES[@]}" >>"$LOG"
+            remove_stale_files
+            if git apply "${APPLY_OPTS[@]}" --check "$PATCH_FILE" >"$check_log" 2>&1; then
+                check_ok=1
+            else
+                cat "$check_log" >>"$LOG"
+            fi
+        fi
+    fi
+
+    if [ "$check_ok" = 0 ]; then
         send_warn "Der Patch passt nicht vollständig zu deinem Panel. Betroffene Dateien:"
         show_failed_files "$check_log"
         if [ -d "$PTERODACTYL_PATH/resources/lang/de" ]; then
@@ -724,7 +804,9 @@ apply_patch() {
         fi
     fi
 
-    create_backup
+    if [ "$BACKUP_DONE" != 1 ]; then
+        create_backup
+    fi
     cp "$PATCH_FILE" "$INSTALLED_PATCH"
     maintenance_down
 
@@ -749,7 +831,7 @@ handle_rejects() {
         install -d "$rej_dir/$(dirname "$file")"
         mv "$file" "$rej_dir/$file"
         count=$((count + 1))
-    done < <(find resources app public -name '*.rej' -print0 2>/dev/null)
+    done < <(find "${ALLOWED_DIRS[@]}" -name '*.rej' -print0 2>/dev/null)
 
     if [ "$count" -gt 0 ]; then
         send_warn "$count Datei(en) wurden nicht vollständig gepatcht. Die abgelehnten Stellen liegen unter $rej_dir."
@@ -840,7 +922,7 @@ do_uninstall() {
         send_info "GermanDactyl wird entfernt, indem das Backup $backup_src zurückgespielt wird."
     else
         send_error "GermanDactyl kann nicht automatisch entfernt werden: Weder der Patch noch das Release-Archiv von v$PANEL_VERSION noch ein Backup sind verfügbar.
-  Lade das Panel-Release deiner Version neu herunter (siehe https://pterodactyl.io/panel/1.0/updating.html)."
+  Lade das Panel-Release deiner Version neu herunter (siehe https://docs.pterodactyl.io/docs/panel/updating)."
     fi
 
     countdown "Die Deinstallation"

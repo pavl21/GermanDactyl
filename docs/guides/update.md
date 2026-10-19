@@ -13,7 +13,7 @@ Pterodactyl hat ein neues Update bekommen? Mit dieser Anleitung ist das kein Pro
 ## 1. Panel aktualisieren
 
 Aktualisiere zuerst das Panel. Die ausführliche Anleitung findest du in der
-[offiziellen Dokumentation](https://pterodactyl.io/panel/1.0/updating.html) – dort stehen auch die Voraussetzungen
+[offiziellen Dokumentation](https://docs.pterodactyl.io/docs/panel/updating) – dort stehen auch die Voraussetzungen
 (z. B. PHP 8.2/8.3 und Composer 2). Hier die Kurzfassung, im Beispiel liegt das Panel unter `/var/www/pterodactyl`:
 
 ```shell
@@ -33,7 +33,7 @@ Beende den Wartungsmodus noch **nicht** – erst nach GermanDactyl (Schritt 3).
 ## 2. GermanDactyl erneut ausführen
 
 ```shell
-curl -sSL https://install.germandactyl.de/ | sudo bash -s -- -y
+curl -fsSL https://install.germandactyl.de/ | sudo bash -s -- -y
 ```
 
 Der Installer wendet den Patch an, baut die Oberfläche und setzt die Rechte. Liegt dein
