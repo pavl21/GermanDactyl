@@ -476,7 +476,7 @@
   <span class="md-ellipsis">
     
   
-    GermanDactyl Setup
+    GermanDactyl Setup (TUI)
   
 
     
@@ -681,8 +681,8 @@ installiert, die die Oberfläche verändern, kann es sein, dass einige Dateien n
 </div>
 <h2 id="voraussetzungen">Voraussetzungen</h2>
 <ul>
-<li>Pterodactyl Panel, installiert nach der <a href="https://pterodactyl.io/panel/1.0/getting_started.html">offiziellen Anleitung</a> (Release-Tarball)</li>
-<li>Ubuntu 22.04/24.04 oder Debian 11/12/13</li>
+<li>Pterodactyl Panel, installiert nach der <a href="https://docs.pterodactyl.io/docs/panel/getting-started">offiziellen Anleitung</a> (Release-Tarball)</li>
+<li>Ubuntu 22.04/24.04/26.04 oder Debian 11/12/13</li>
 <li>PHP 8.2 oder 8.3</li>
 <li>Node.js ≥ 22 (wird bei Bedarf automatisch installiert)</li>
 <li>Mindestens 2 GB RAM (oder entsprechend Swap) für den Build</li>
@@ -730,15 +730,15 @@ Version mit <code>-v &lt;version&gt;</code> angeben.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg></span> Normale Installation</label><label for="__tabbed_1_2"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 4H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8z"/></svg></span> Ordner auswählen</label><label for="__tabbed_1_3"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1a6.887 6.887 0 0 0 0 9.8c2.73 2.7 7.15 2.7 9.88 0 1.36-1.35 2.04-2.92 2.04-4.9h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.53-9.11-.02-12.58a8.987 8.987 0 0 1 12.65 0L21 3zM12.5 8v4.25l3.5 2.08-.72 1.21L11 13V8z"/></svg></span> Version erzwingen</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-sSL<span class="w"> </span>https://install.germandactyl.de/<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>bash<span class="w"> </span>-s<span class="w"> </span>--
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://install.germandactyl.de/<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>bash<span class="w"> </span>-s<span class="w"> </span>--
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-sSL<span class="w"> </span>https://install.germandactyl.de/<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>bash<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>-d<span class="w"> </span>/var/www/pterodactyl<span class="w"> </span>-y
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://install.germandactyl.de/<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>bash<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>-d<span class="w"> </span>/var/www/pterodactyl
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-sSL<span class="w"> </span>https://install.germandactyl.de/<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>bash<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>-v<span class="w"> </span><span class="m">1</span>.15.1
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://install.germandactyl.de/<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>bash<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>-v<span class="w"> </span><span class="m">1</span>.15.1
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Auf eigenes Risiko</p>
@@ -767,7 +767,7 @@ Panel-Version passt meist nicht vollständig.</p>
 </tr>
 <tr>
 <td><code>-y</code></td>
-<td>ohne 10-Sekunden-Wartezeit starten</td>
+<td>ohne Wartezeit starten und Rückfragen mit Ja beantworten</td>
 </tr>
 <tr>
 <td><code>-u</code></td>
@@ -781,15 +781,18 @@ Panel-Version passt meist nicht vollständig.</p>
 </table>
 <h3 id="was-der-installer-macht">Was der Installer macht</h3>
 <ol>
-<li><strong>Prüfungen:</strong> Root-Rechte, Panel-Pfad, Panel-Version, Distribution (Debian/Ubuntu), Node.js ≥ 22 (sonst wird Node 22 über NodeSource installiert) und Yarn.</li>
-<li><strong>Backup</strong> nach <code>/var/backups/germandactyl/</code>.</li>
+<li><strong>Patch laden und Signatur prüfen:</strong> Der Installer prüft Root-Rechte, Panel-Pfad und Panel-Version, lädt den passenden Patch und prüft Signatur und Prüfsumme.</li>
+<li><strong>Bereits installiert?</strong> Ist der Patch schon angewendet, endet der Installer hier ohne Änderungen. Sonst folgen – nach einer kurzen Wartezeit (überspringen mit <code>-y</code>) – die weiteren Schritte.</li>
+<li><strong>Abhängigkeiten:</strong> PHP, Node.js (die Mindestversion liest der Installer aus der <code>package.json</code> des Panels, ab 1.12 ist das Node.js ≥ 22; fehlt sie, wird sie über NodeSource installiert) und Yarn bzw. npm. Fehlende Pakete installiert er unter Debian/Ubuntu selbst.</li>
+<li><strong>Backup</strong> nach <code>/var/backups/germandactyl/</code> (<code>panel-&lt;version&gt;-install-&lt;zeit&gt;.tar.gz</code>).</li>
 <li><strong>Wartungsmodus</strong> einschalten.</li>
-<li><strong>Patch</strong> herunterladen, prüfen und anwenden.</li>
+<li><strong>Patch anwenden.</strong></li>
+<li><strong>Build</strong> der Oberfläche mit Yarn (bei Panels mit <code>package-lock.json</code> statt <code>yarn.lock</code> mit npm).</li>
 <li><strong>Sprache umstellen:</strong> Panel-Standardsprache und alle bestehenden Benutzer auf Deutsch, neue Benutzer bekommen ebenfalls Deutsch.</li>
-<li><strong>Build</strong> der Oberfläche mit Yarn.</li>
-<li><strong>Cache leeren</strong> und <strong>Rechte setzen</strong>, danach Wartungsmodus beenden.</li>
+<li><strong>Caches leeren, Rechte setzen</strong> und die Queue-Worker neu starten.</li>
+<li><strong>Wartungsmodus beenden.</strong></li>
 </ol>
-<p>Schlägt der Build fehl, wird das Backup automatisch wiederhergestellt. Alle Ausgaben landen in
+<p>Schlägt ein Schritt nach dem Anwenden des Patches fehl (z. B. der Build), wird das Backup automatisch wiederhergestellt. Alle Ausgaben landen in
 <code>/var/log/germandactyl.log</code> (Fallback: <code>germandactyl.debug.log</code> im Panel-Ordner).</p>
 <div class="admonition tip">
 <p class="admonition-title">Sprache pro Benutzer</p>
@@ -842,7 +845,8 @@ chown<span class="w"> </span>-R<span class="w"> </span>www-data:www-data<span cl
 </li>
 <li>
 <p>Stelle die Sprache ein: <code>APP_LOCALE=de</code> in der <code>.env</code> setzen und unter <strong>Admin → Benutzer</strong> die Sprache der
-   Benutzer auf Deutsch stellen.</p>
+   Benutzer auf Deutsch stellen. Zusätzlich musst du unter <strong>Admin → Einstellungen</strong> die Standardsprache auf
+   Deutsch stellen (die Einstellung in der Datenbank überschreibt <code>APP_LOCALE</code>).</p>
 </li>
 </ol>
 <p>Das war's – dein Pterodactyl Panel ist jetzt auf Deutsch. :)</p>

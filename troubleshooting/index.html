@@ -346,7 +346,7 @@
   <span class="md-ellipsis">
     
   
-    GermanDactyl Setup
+    GermanDactyl Setup (TUI)
   
 
     
@@ -556,7 +556,7 @@
 <h1 id="fehlerbehebung">Fehlerbehebung</h1>
 <p>Hier findest du alle Lösungen, die wir kennen. Tritt bei dir ein unbekannter Fehler auf, eröffne ein
 <a href="https://github.com/pavl21/GermanDactyl/issues">Issue</a> und hänge einen Auszug aus <code>/var/log/germandactyl.log</code>
-(im Panel-Ordner) an, damit wir dir helfen können.</p>
+(Fallback: <code>germandactyl.debug.log</code> im Panel-Ordner) an, damit wir dir helfen können.</p>
 <details class="error">
 <summary>Unter … wurde kein Pterodactyl-Panel gefunden. Gib den richtigen Pfad mit -d <pfad> an.</summary>
 <p>Dieser Fehler tritt meistens auf, wenn Pterodactyl nicht unter <code>/var/www/pterodactyl</code> installiert wurde. Ist das
@@ -601,7 +601,7 @@ Stand. Häufige Ursachen:</p>
 <details class="error">
 <summary>Das Panel ist nach dem Update oder der Installation nur noch weiß</summary>
 <p>Meist liegt das an einem Theme oder Add-on, das du vorher genutzt hast und das eigene Dateien mitbringt.</p>
-<p>Am saubersten ist es, das offizielle Release-Tarball deiner Panel-Version neu zu entpacken, wie in der
+<p>Am saubersten ist es, den offiziellen Release-Tarball deiner Panel-Version neu zu entpacken, wie in der
 <a href="../uninstall/#manuell-zurucksetzen">Deinstallation</a> beschrieben. Sichere vorher eigene Änderungen. Führe
 danach GermanDactyl erneut aus.</p>
 </details>

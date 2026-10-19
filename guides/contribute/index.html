@@ -346,7 +346,7 @@
   <span class="md-ellipsis">
     
   
-    GermanDactyl Setup
+    GermanDactyl Setup (TUI)
   
 
     
@@ -622,6 +622,11 @@
 
 <h1 id="ubersetzungen-einreichen">Übersetzungen einreichen</h1>
 <p>Vielen Dank, dass du GermanDactyl verbessern möchtest! So läuft ein Beitrag ab:</p>
+<div class="admonition info">
+<p class="admonition-title">Voraussetzungen</p>
+<p>Die Skripte brauchen Linux mit bash ≥ 4.4, GNU coreutils/find, git und gpg (gpg nur zum Signieren durch den
+Maintainer). Unter macOS oder BSD laufen sie nicht zuverlässig.</p>
+</div>
 <ol>
 <li><strong>Forke</strong> das <a href="https://github.com/pavl21/GermanDactyl">Repository</a> und klone deinen Fork.</li>
 <li><strong>Arbeitsstand vorbereiten:</strong> Das Skript lädt die passende Panel-Version und wendet den vorhandenen Patch an.
@@ -631,15 +636,17 @@
 <li><strong>Übersetzen:</strong> Die deutschen Sprachdateien liegen in <code>resources/lang/de</code>, fest eingebaute Texte findest du in
    den Vorlagen unter <code>resources/</code>. Halte dich an die Richtlinien unten.</li>
 <li><strong>Patch erstellen:</strong>
-    <div class="highlight"><pre><span></span><code>./scripts/createPatch.sh<span class="w"> </span><span class="m">1</span>.15.1
+    <div class="highlight"><pre><span></span><code>./scripts/createPatch.sh<span class="w"> </span>--no-sign<span class="w"> </span><span class="m">1</span>.15.1
 </code></pre></div>
-    Der Patch landet unter <code>patches/v&lt;version&gt;.patch</code>.</li>
+    Der Patch landet unter <code>patches/v&lt;version&gt;.patch</code>. <code>--no-sign</code> brauchst du, weil nur der Maintainer den
+    Signaturschlüssel hat.</li>
 <li><strong>Pull Request</strong> mit dem aktualisierten Patch eröffnen und kurz beschreiben, was du geändert hast.</li>
 </ol>
 <div class="admonition info">
 <p class="admonition-title">Signatur</p>
 <p>Neue oder geänderte Patches müssen signiert werden, sonst lehnt der Installer sie ab. Das übernimmt der
-Maintainer beim Merge mit <code>./scripts/createPatch.sh --sign</code>. In deinem Pull Request darf der Workflow
+Maintainer beim Merge mit <code>./scripts/createPatch.sh --sign</code> (als Maintainer lässt du <code>--no-sign</code> weg und
+setzt <code>GERMANDACTYL_SIGNING_KEY</code>). In deinem Pull Request darf der Workflow
 „Patches prüfen“ deshalb fehlschlagen.</p>
 </div>
 <h2 id="richtlinien">Richtlinien</h2>
