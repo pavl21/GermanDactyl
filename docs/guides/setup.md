@@ -54,4 +54,4 @@ Einige Teile des Skripts stammen von anderen Entwicklern oder nutzen deren Softw
 Die Farbthemen stammen von [SigmaProduction](https://github.com/Sigma-Production/PteroFreeStuffinstaller)
 
 ### Let's Encrypt
-Für die SSL-Zertifikate wird Certbot verwendet. [Zahlreiche Sponsoren](https://letsencrypt.org/de/sponsors/) ermöglichen es, dass Let's Encrypt SSL-Zertifikate kostenlos bereitstellt. Die Zertifikate sind 90 Tage gültig und müssen danach erneuert werden – das erledigst du ganz einfach in der Problembehandlung des Skripts.
+Für die SSL-Zertifikate wird Certbot verwendet. [Zahlreiche Sponsoren](https://letsencrypt.org/de/sponsors/) ermöglichen es, dass Let's Encrypt SSL-Zertifikate kostenlos bereitstellt. Die Zertifikate sind 90 Tage gültig. Die Erneuerung läuft automatisch über den `certbot.timer`. GermanDactyl Setup prüft unter **Hilfe & Analyse**, ob die Erneuerung funktioniert, und bietet dir unter **SSL-Zertifikate** einen Test (Dry-Run), die Erneuerung und die Neuausstellung an.
