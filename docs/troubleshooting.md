@@ -2,7 +2,7 @@
 
 Hier findest du alle Lösungen, die wir kennen. Tritt bei dir ein unbekannter Fehler auf, eröffne ein
 [Issue](https://github.com/pavl21/GermanDactyl/issues) und hänge einen Auszug aus `/var/log/germandactyl.log`
-(im Panel-Ordner) an, damit wir dir helfen können.
+(Fallback: `germandactyl.debug.log` im Panel-Ordner) an, damit wir dir helfen können.
 
 ??? error "Unter … wurde kein Pterodactyl-Panel gefunden. Gib den richtigen Pfad mit -d <pfad> an."
     Dieser Fehler tritt meistens auf, wenn Pterodactyl nicht unter `/var/www/pterodactyl` installiert wurde. Ist das
@@ -45,6 +45,6 @@ Hier findest du alle Lösungen, die wir kennen. Tritt bei dir ein unbekannter Fe
 ??? error "Das Panel ist nach dem Update oder der Installation nur noch weiß"
     Meist liegt das an einem Theme oder Add-on, das du vorher genutzt hast und das eigene Dateien mitbringt.
 
-    Am saubersten ist es, das offizielle Release-Tarball deiner Panel-Version neu zu entpacken, wie in der
+    Am saubersten ist es, den offiziellen Release-Tarball deiner Panel-Version neu zu entpacken, wie in der
     [Deinstallation](uninstall.md#manuell-zurucksetzen) beschrieben. Sichere vorher eigene Änderungen. Führe
     danach GermanDactyl erneut aus.

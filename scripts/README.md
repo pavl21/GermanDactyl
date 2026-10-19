@@ -7,7 +7,7 @@ In diesem Ordner liegen die Skripte für die Installation von GermanDactyl und f
 | [install.sh](install.sh) | Installiert GermanDactyl in einem bestehenden Panel oder entfernt es wieder (`-u`) |
 | [startPatching.sh](startPatching.sh) | Wechselt in den Patch-Modus, um eine neue Panel-Version zu übersetzen |
 | [createPatch.sh](createPatch.sh) | Erstellt aus den Änderungen den neuen Patch und verlässt den Patch-Modus |
-| [installAddon.sh](installAddon.sh) | **[Nicht fertig]** Installiert ein Addon |
+| [installAddon.sh](installAddon.sh) | **[Nicht fertig]** Installiert ein Add-on |
 
 ## install.sh
 
@@ -47,7 +47,7 @@ Schlägt der Build fehl, spielt das Skript das Backup automatisch zurück. Alle 
 
 `startPatching.sh` bricht ab, wenn du nicht auf `main` bist, dein Arbeitsverzeichnis nicht sauber ist oder der Branch `patches` bzw. der Tag `base` noch von einem früheren Lauf existiert. Anschließend wendet es den neuesten vorhandenen Patch an, der nicht neuer als die Zielversion ist.
 
-`createPatch.sh` schreibt `patches/<version>.patch` (z. B. `patches/v1.15.1.patch`), wechselt zurück auf `main` und räumt den Patch-Modus auf. Danach trägst du die Version selbst in [`patches/README.md`](../patches/README.md) und in `KNOWN_PATCHES` in `install.sh` ein.
+`createPatch.sh` schreibt `patches/v<version>.patch` (z. B. `patches/v1.15.1.patch`), wechselt zurück auf `main` und räumt den Patch-Modus auf. Danach trägst du die Version selbst in [`patches/README.md`](../patches/README.md) und in `KNOWN_PATCHES` in `install.sh` ein.
 
 ## Patches signieren
 

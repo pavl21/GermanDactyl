@@ -75,4 +75,4 @@ Verbreitet unter der MIT-Lizenz. Siehe [`LICENSE`](LICENSE) für weitere Informa
 
 [license-shield]: https://img.shields.io/github/license/pavl21/GermanDactyl.svg?style=for-the-badge
 
-[license-url]: https://github.com/pavl21/GermanDactyl/blob/master/LICENSE
+[license-url]: https://github.com/pavl21/GermanDactyl/blob/main/LICENSE
