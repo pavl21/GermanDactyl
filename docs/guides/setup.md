@@ -10,8 +10,8 @@ Mit diesem Skript setzt du kinderleicht ein Pterodactyl Panel auf. Du brauchst d
 
 ## Installation
 
-!!! warning "Beta-Phase"
-    Das Skript befindet sich in der Beta-Phase! Es können noch unerwartete Probleme auftreten, die Verwendung erfolgt auf eigene Verantwortung.
+!!! warning "Testphase"
+    GermanDactyl Setup befindet sich noch in der Testphase! Es können jederzeit unerwartete Fehler auftreten, auch bei Funktionen, die bereits stabil wirken. Nutze es zuerst auf einem Testserver, erstelle vor Updates und Änderungen immer ein Backup, die Verwendung erfolgt auf eigene Verantwortung.
     Startet das Skript bei dir nicht, eröffne bitte ein [Issue bei uns](https://github.com/pavl21/GermanDactyl/issues).
 
 Mit diesem Befehl startest du das Skript:

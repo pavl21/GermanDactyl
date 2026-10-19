@@ -35,6 +35,8 @@ sudo bash -c "$(curl -fsSL https://setup.germandactyl.de/)"
 
 Es installiert Panel, Wings und die Übersetzung komplett über eine Textoberfläche. Die Anleitung findest du unter https://germandactyl.de/guides/setup/.
 
+**Hinweis:** Das Setup ist noch in der Testphase. Es können jederzeit unerwartete Fehler auftreten. Nutze es zuerst auf einem Testserver und erstelle vor Änderungen ein Backup.
+
 ## Unterstützte Versionen
 
 Aktuelle Panel-Version: **v1.15.1**
